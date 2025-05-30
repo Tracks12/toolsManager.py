@@ -8,6 +8,7 @@ from core.tool import Tool
 class Shell(Tool):
 	command	= (("shell", "sh"), "(sh)ell")
 	name	= "Shell"
+	path = __file__
 	version	= "0.1a"
 
 	_args	= [

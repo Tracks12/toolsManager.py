@@ -12,6 +12,7 @@ from core.tool import Tool
 class Matrix(Tool):
 	command	= (("matrix", "mat"), "(mat)rix")
 	name	= "Matrix"
+	path = __file__
 	version	= "0.1a"
 
 	_args	= [

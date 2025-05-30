@@ -10,6 +10,7 @@ from core.tool import Tool
 class WslBuilder(Tool):
 	command	= (("wslbuilder", "wb"), "(wb)wslbuilder")
 	name	= "WSLBuilder"
+	path = __file__
 	version	= "0.1a"
 
 	_args	= [
@@ -63,9 +64,9 @@ class WslBuilder(Tool):
 	def _list(self, args: list[str]) -> None:
 		distros = listdir(self.__path)[:]
 
-		print(f" {' '*1}*  Name{' '*(12-len('Name'))}Path")
+		print(f"{' '*1}*  Name{' '*(12-len('Name'))}Path")
 		for i, distro in enumerate(distros, start=1):
-			print(f" {' '*(2-len(str(i)))}{i}. {distro}{' '*(12-len(distro))}{self.__path}/{distro}/")
+			print(f"{' '*(2-len(str(i)))}{i}. {distro}{' '*(12-len(distro))}{self.__path}/{distro}/")
 
 	def _start(self, args: list[str]) -> None:
 		shell(f"wsl -d {args[0]}")

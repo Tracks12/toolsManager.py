@@ -6,9 +6,10 @@ from traceback import format_exc
 from core.icons import Icons
 
 class Tool:
-	command	: tuple[tuple[str, str], str]				= (("", ""), "")
-	name	: str										= ""
-	version	: str										= ""
+	command	: tuple[tuple[str, str], str]	= (("", ""), "")
+	name	: str							= ""
+	path	: str							= ""
+	version	: str							= ""
 
 	_args	: list[tuple[tuple[str, str, str], str]]	= [
 		(("-h", "--help", ""), "Show the helper commands menu"),

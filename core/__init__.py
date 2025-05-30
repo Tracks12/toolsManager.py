@@ -29,8 +29,9 @@ def launch(tool: Tool, args: list[str]) -> bool:
 		return(True)
 
 def sortTools(tools: list[Tool]) -> list[Tool]:
-	for i, tool in enumerate(tools, 1):
-		print(f" {i}.\t{tool.name}", end="\n"*(2 if(i == len(tools)) else 1))
+	print(f"{' '*1}*  Name{' '*(12-len('Name'))}Path")
+	for i, tool in enumerate(tools, start=1):
+		print(f"{' '*(2-len(str(i)))}{i}. {tool.name}{' '*(12-len(tool.name))}{tool.path}", end="\n"*(2 if(i == len(tools)) else 1))
 
 	return(tools)
 
