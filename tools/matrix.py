@@ -19,7 +19,7 @@ class Matrix(Tool):
 		(("-r", "--random", "<x> <y> <i>"), "Create a matrix with placed random point")
 	] + Tool._args[:]
 
-	def __init__(self, args):
+	def __init__(self, args: list[str]):
 		Tool.__init__(self)
 
 		self._execs = [

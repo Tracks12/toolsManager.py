@@ -14,7 +14,7 @@ class Shell(Tool):
 		(("-c", "--command", ""), "Run a bash command")
 	] + Tool._args[:]
 
-	def __init__(self, args):
+	def __init__(self, args: list[str]):
 		Tool.__init__(self)
 
 		self._execs = [

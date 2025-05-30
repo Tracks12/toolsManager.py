@@ -93,6 +93,14 @@ def config(cfg: Config) -> bool:
 			except Exception as e:
 				print(f"{Icons.warn}{e}")
 
+		elif(args[0] in ("get", "g")):
+			match(args[1]):
+				case "encode":
+					print(cfg.getEncoding())
+
+				case "splash":
+					print(cfg.getSplash())
+
 		elif(args[0] in ("quit", "q")):
 			break
 
