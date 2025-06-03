@@ -1,4 +1,5 @@
+/WSLBuilder/
 __pycache__/
-WSLBuilder/
 
 *.pyc
+*.vhdx

@@ -15,7 +15,7 @@ if(version_info.major < 3):
 	exit()
 
 # Importation des dépendances internes
-from core import INFO, REGEX_ARGS, Colors, Config, Icons, launch, sortTools, splash, version
+from core import INFO, REGEX_ARGS, Colors, Config, Icons, helper, launch, sortTools, splash, version
 from tools import TOOLS
 
 def arg() -> bool:
@@ -68,13 +68,22 @@ def arg() -> bool:
 	return(True)
 
 def config(cfg: Config) -> bool:
+	commands = list[tuple]([
+		(("set", "s"), "(s)et"),
+		(("get", "g"), "(g)et"),
+		(("help", "h"), "(h)elp"),
+		(("back", "b"), "(b)ack")
+	])
+
+	helper(commands)
+
 	while(True):
 		prompt = str(input(f"({Colors.green}{INFO['name']}{Colors.end})[{Colors.purple}settings{Colors.end}]> {Colors.cyan}"))
 		print(end=Colors.end)
 
 		args = list[str](re.split(REGEX_ARGS, prompt))
 
-		if(args[0] in ("set", "s")):
+		if(args[0] in commands[0][0]):
 			try:
 				isApplied = bool(False)
 
@@ -93,7 +102,7 @@ def config(cfg: Config) -> bool:
 			except Exception as e:
 				print(f"{Icons.warn}{e}")
 
-		elif(args[0] in ("get", "g")):
+		elif(args[0] in commands[1][0]):
 			match(args[1]):
 				case "encode":
 					print(cfg.getEncoding())
@@ -101,10 +110,17 @@ def config(cfg: Config) -> bool:
 				case "splash":
 					print(cfg.getSplash())
 
-		elif(args[0] in ("quit", "q")):
+				case "all":
+					print(f"encode: {cfg.getEncoding()}")
+					print(f"splash: {cfg.getSplash()}")
+
+		elif(args[0] in commands[-2][0]):
+			helper(commands)
+
+		elif(args[0] in commands[-1][0]):
 			break
 
-		elif(args[0] == ""):
+		elif(not args[0]):
 			pass
 
 		else:
@@ -113,21 +129,6 @@ def config(cfg: Config) -> bool:
 	return(True)
 
 def main(cfg: Config) -> bool:
-	def helper(commands: tuple) -> None:
-		colors = tuple[str]((Colors.cyan, Colors.yellow, Colors.red))
-		screen = list[str]([ " List of commands:\n" ])
-
-		for i, command in enumerate(commands):
-			c = int(1 if(i in range((len(commands)-4), (len(commands)-1))) else 0)
-			c = int(2 if(i in range((len(commands)-1), (len(commands)))) else c)
-			sep = str('\n' if(i in (len(commands)-5, len(commands)-2)) else '')
-
-			command = str(f" {colors[c]}{command[1]}{Colors.end}{sep}")
-
-			screen.append(command)
-
-		print(("\n").join(screen), end="\n\n")
-
 	commands = list[tuple]([
 		(("settings", "set"), "(set)tings"),
 		(("version", "ver"), "(ver)sion"),
@@ -175,7 +176,7 @@ def main(cfg: Config) -> bool:
 		elif(args[0] in commands[-1][0]):
 			break
 
-		elif(args[0] == "" or f):
+		elif((not args[0]) or f):
 			pass
 
 		else:
