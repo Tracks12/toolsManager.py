@@ -107,7 +107,6 @@ class WslBuilder(Tool):
 		shell("wsl service docker start")
 		shell('wsl touch "/../run/openrc/softlevel"')
 		shell("wsl service docker start")
-		shell("wsl docker ps")
 
 	def _list(self) -> None:
 		distros = listdir(self.__path)
