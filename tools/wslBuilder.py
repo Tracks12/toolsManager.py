@@ -53,28 +53,46 @@ class WslBuilder(Tool):
 
 		self._run(args)
 
+	def __checkDockerStatus(self) -> bool:
+		return bool(shell(f"wsl service docker status"))
+
 	def _create(self, args: list[str]) -> None:
+		__distroName = args[0].replace(':', '-')
+		__distroPath = abspath(f"{self.__path}/{__distroName}")
+
 		try:
-			mkdir(f"{self.__path}/{args[0]}")
-			shell(f"wsl docker pull {args[0]}")
-			shell(f"wsl docker run -d --name {args[0]} {args[0]}:latest")
-			shell(f"wsl docker export {args[0]} > {args[0]}.tar")
-			rename(f"{args[0]}.tar", f"{self.__path}/{args[0]}/{args[0]}.tar")
-			shell(f"wsl --import {args[0]} {self.__path}/{args[0]} {self.__path}/{args[0]}/{args[0]}.tar")
+			mkdir(__distroPath)
+
+			if(self.__checkDockerStatus()):
+				raise(Exception("Docker wasn't started on wsl"))
+
+			if(shell(f"wsl docker pull {args[0]}")):
+				raise(Exception(f"Docker hasn't found {args[0]} image"))
+
+			shell(f"wsl docker run -d --name {__distroName} {args[0]}")
+			shell(f"wsl docker export {__distroName} > {__distroName}.tar")
+			rename(f"{__distroName}.tar", f"{__distroPath}/{__distroName}.tar")
+			shell(f"wsl --import {__distroName} {__distroPath} {__distroPath}/{__distroName}.tar")
 
 			self._start(args)
 
-		except FileExistsError:
+		except(FileExistsError):
 			print(f"{Icons.warn}Wsl distribution already exist on workspace")
 
+		except(Exception) as e:
+			print(f"{Icons.warn}{e}")
+			rmdir(__distroPath)
+
 	def _delete(self, args: list[str]) -> None:
-		distros = listdir(self.__path)
+		__distros = listdir(self.__path)
+		__distroName = args[0].replace(':', '-')
+		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
 		try:
-			if(args[0] in distros):
-				shell(f"wsl --unregister {args[0]}")
-				remove(f"{self.__path}/{args[0]}/{args[0]}.tar")
-				rmdir(f"{self.__path}/{args[0]}")
+			if(__distroName in __distros):
+				shell(f"wsl --unregister {__distroName}")
+				remove(f"{__distroPath}/{__distroName}.tar")
+				rmdir(f"{__distroPath}")
 
 			else:
 				raise FileNotFoundError
@@ -83,15 +101,17 @@ class WslBuilder(Tool):
 			print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
 
 	def _fullDelete(self, args: list[str]) -> None:
-		shell(f"wsl docker rm {args[0]}")
-		shell(f"wsl docker rmi {args[0]}:latest")
+		__distroName = args[0].replace(':', '-')
+
+		shell(f"wsl docker rm {__distroName}")
+		shell(f"wsl docker rmi {args[0]}")
 
 		self._delete(args)
 
 	def _export(self, args: list[str]) -> None:
-		distros = listdir(self.__path)
+		__distros = listdir(self.__path)
 
-		if(args[0] in distros):
+		if(args[0] in __distros):
 			shell(f"wsl --export {args[0]} {self.__path}/{args[0]}/{args[0]}.tar")
 
 		else:
@@ -100,26 +120,29 @@ class WslBuilder(Tool):
 	def _init(self) -> None:
 		__libspath = abspath(f"{self.__path}/../libs/wslbuilder")
 
-		shell(f"wsl --import wslbuilder {__libspath} {__libspath}/image.tar")
+		shell(f"wsl --import wslbuilder {__libspath} {__libspath}/wslbuilder.tar")
 		shell("wsl -s wslbuilder")
 		shell("wsl apk update")
 		shell("wsl apk add docker openrc")
-		shell("wsl service docker start")
-		shell('wsl touch "/../run/openrc/softlevel"')
-		shell("wsl service docker start")
+
+		if(self.__checkDockerStatus):
+			if(shell("wsl service docker start")):
+				shell('wsl touch "/../run/openrc/softlevel"')
+				shell("wsl service docker start")
 
 	def _list(self) -> None:
-		distros = listdir(self.__path)
+		__distros = listdir(self.__path)
 
-		print(f"\n {' '*1}*  Name{' '*(12-len('Name'))}Path")
-		for i, distro in enumerate(distros, start=1):
-			print(f" {' '*(2-len(str(i)))}{i}. {distro}{' '*(12-len(distro))}{abspath(f'{self.__path}/{distro}')}")
+		print(f"\n {' '*1}*  Name{' '*(18-len('Name'))}Path")
+		for i, distro in enumerate(__distros, start=1):
+			print(f" {' '*(2-len(str(i)))}{i}. {distro.replace('-', ':')}{' '*(18-len(distro))}{abspath(f'{self.__path}/{distro}')}")
 
 	def _start(self, args: list[str]) -> None:
-		distros = listdir(self.__path)
+		__distros = listdir(self.__path)
+		__distroName = args[0].replace(':', '-')
 
-		if(args[0] in distros):
-			shell(f"wsl -d {args[0]}")
+		if(__distroName in __distros):
+			shell(f"wsl -d {__distroName}")
 
 		else:
 			print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
