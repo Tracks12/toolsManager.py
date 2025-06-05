@@ -103,16 +103,20 @@ def config(cfg: Config) -> bool:
 				print(f"{Icons.warn}{e}")
 
 		elif(args[0] in commands[1][0]):
-			match(args[1]):
-				case "encode":
-					print(cfg.getEncoding())
+			try:
+				match(args[1]):
+					case "encode":
+						print(cfg.getEncoding())
 
-				case "splash":
-					print(cfg.getSplash())
+					case "splash":
+						print(cfg.getSplash())
 
-				case "all":
-					print(f"encode: {cfg.getEncoding()}")
-					print(f"splash: {cfg.getSplash()}")
+					case "all":
+						print(f"encode: {cfg.getEncoding()}")
+						print(f"splash: {cfg.getSplash()}")
+
+			except IndexError:
+				print(f"{Icons.warn}No value was entered !")
 
 		elif(args[0] in commands[-2][0]):
 			helper(commands)
