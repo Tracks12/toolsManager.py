@@ -1,7 +1,7 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
-from os import listdir, mkdir, remove, rmdir, rename, system as shell
+from os import listdir, mkdir, remove, rmdir, system as shell
 from os.path import abspath, dirname
 
 from core.icons import Icons
@@ -70,8 +70,7 @@ class WslBuilder(Tool):
 				raise(Exception(f"Docker hasn't found {args[0]} image"))
 
 			shell(f"wsl docker run -d --name {__distroName} {args[0]}")
-			shell(f"wsl docker export {__distroName} > {__distroName}.tar")
-			rename(f"{__distroName}.tar", f"{__distroPath}/{__distroName}.tar")
+			shell(f"wsl docker export {__distroName} > {__distroPath}/{__distroName}.tar")
 			shell(f"wsl --import {__distroName} {__distroPath} {__distroPath}/{__distroName}.tar")
 
 			self._start(args)
