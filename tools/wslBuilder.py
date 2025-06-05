@@ -109,9 +109,11 @@ class WslBuilder(Tool):
 
 	def _export(self, args: list[str]) -> None:
 		__distros = listdir(self.__path)
+		__distroName = args[0].replace(':', '-')
+		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
-		if(args[0] in __distros):
-			shell(f"wsl --export {args[0]} {self.__path}/{args[0]}/{args[0]}.tar")
+		if(__distroName in __distros):
+			shell(f"wsl --export {__distroName} {__distroPath}/{__distroName}.tar")
 
 		else:
 			print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
