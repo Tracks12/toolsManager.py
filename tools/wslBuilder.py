@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from os import listdir, mkdir, remove, rmdir, system as shell
-from os.path import abspath, dirname
+from os.path import abspath, dirname, getsize
 
+from core import UNITS
 from core.icons import Icons
 from core.tool import Tool
 
@@ -134,9 +135,19 @@ class WslBuilder(Tool):
 	def _list(self) -> None:
 		__distros = listdir(self.__path)
 
-		print(f"\n {' '*1}*  Name{' '*(18-len('Name'))}Path")
+		print(f"\n {' '*1}*  Name{' '*(18-len('Name'))}Size{' '*(12-len('Size'))}Path")
 		for i, distro in enumerate(__distros, start=1):
-			print(f" {' '*(2-len(str(i)))}{i}. {distro.replace('-', ':')}{' '*(18-len(distro))}{abspath(f'{self.__path}/{distro}')}")
+			size = [getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")), UNITS[0]]
+
+			for j in range(1, len(UNITS)):
+				size[0] /= 1000
+				size[1] = UNITS[j]
+				if(size[0] < 1024):
+					break
+
+			size = f"{round(size[0], 2)} {size[1]}"
+
+			print(f" {' '*(2-len(str(i)))}{i}. {distro.replace('-', ':')}{' '*(18-len(distro))}{size}{' '*(12-len(size))}{abspath(f'{self.__path}/{distro}')}")
 
 	def _start(self, args: list[str]) -> None:
 		__distros = listdir(self.__path)
