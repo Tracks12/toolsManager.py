@@ -14,7 +14,8 @@ INFO = dict[str, str]({
 	"version": "0.1"
 })
 
-REGEX_ARGS = str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
+REGEX_ARGS	= str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
+UNITS		= tuple[str](("o", "ko", "Mo", "Go", "To"))
 
 def helper(commands: tuple) -> None:
 	colors = tuple[str]((Colors.cyan, Colors.yellow, Colors.red))
