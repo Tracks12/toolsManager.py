@@ -133,18 +133,12 @@ def config(cfg: Config) -> bool:
 	return(True)
 
 def main(cfg: Config) -> bool:
-	commands = list[tuple]([
+	commands = list[tuple]([ tool.command for tool in TOOLS ] + [
 		(("settings", "set"), "(set)tings"),
 		(("version", "ver"), "(ver)sion"),
 		(("help", "h"), "(h)elp"),
 		(("quit", "q"), "(q)uit")
 	])
-
-	TOOLS.reverse()
-	for tool in TOOLS:
-		commands = [tool.command] + commands[:]
-
-	TOOLS.reverse()
 
 	if(cfg.getSplash()):
 		splash()
@@ -168,23 +162,24 @@ def main(cfg: Config) -> bool:
 				except:
 					print(f'{Icons.warn}"{command[0][0]}" not implemented !')
 
-		if(args[0] in commands[-4][0]):
-			config(cfg)
+		if(not f):
+			if(args[0] in commands[-4][0]):
+				config(cfg)
 
-		elif(args[0] in commands[-3][0]):
-			version()
+			elif(args[0] in commands[-3][0]):
+				version()
 
-		elif(args[0] in commands[-2][0]):
-			helper(commands)
+			elif(args[0] in commands[-2][0]):
+				helper(commands)
 
-		elif(args[0] in commands[-1][0]):
-			break
+			elif(args[0] in commands[-1][0]):
+				break
 
-		elif((not args[0]) or f):
-			pass
+			elif((not args[0]) or f):
+				pass
 
-		else:
-			print(f"{Icons.warn}Uknown command !")
+			else:
+				print(f"{Icons.warn}Uknown command !")
 
 	return(True)
 
