@@ -5,10 +5,12 @@ from core.tool import Tool
 
 from tools.matrix import Matrix
 from tools.shell import Shell
+from tools.translate import Translate
 from tools.wslBuilder import WslBuilder
 
 TOOLS: list[Tool] = [
 	Matrix,
 	Shell,
+  Translate,
 	WslBuilder,
 ]
