@@ -44,10 +44,43 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 
 ## Utilisations
 
+Exécution du script: `$ python main.py <arg>`
+
+| Arguments                    | Valeur                  | Descriptions                       |
+| ---------------------------- | ----------------------- | ---------------------------------- |
+| `-l`, `--list`               | -                       | Affiche la liste des outils python |
+| `-t <tool>`, `--tool <tool>` | `<tool>` nom de l'outil | Lance un outil                     |
+| `-h`, `--help`               | -                       | Affiche le menu d'aide             |
+| `-D`, `--debug`              | -                       | Exécution en mode debuger          |
+| `-v`, `--version`            | -                       | Affiche la version du programme    |
+
+[Sommaire](#sommaire)
+
 ### Gestion des outils
 
 [Sommaire](#sommaire)
 
 ### Gestion WSL avec WSLBuilder
+
+[Sommaire](#sommaire)
+
+## Options & Configurations
+
+La configuration du programme se fait depuis le fichier **[config.json](config.json)** au format **json**, dans ce fichier vous pouvez l'**encodage des caractères** ainsi que l'affichage du splash screen.
+
+```json
+{
+  "encoding": "utf-8",
+  "splash": true
+}
+```
+
+Vous pouvez le modifier directement (ce qui est peu conseiller) ou bien passer par le programme de configuration avec **tous les choix des paramètres possible à l'option "Paramètres" du menu principal**.
+
+[Sommaire](#sommaire)
+
+## Licence
+
+Code sous license [GPL v3](LICENSE)
 
 [Sommaire](#sommaire)
