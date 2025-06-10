@@ -12,16 +12,16 @@ from core.tool import Tool
 class Matrix(Tool):
 	command	= (("matrix", "mat"), "(mat)rix")
 	name	= "Matrix"
-	path = __file__
+	path	= __file__
 	version	= "0.1a"
 
-	_args	= [
-		(("-n", "--new", "<x> <y>"), "Create a matrix with custom dimensions"),
-		(("-r", "--random", "<x> <y> <i>"), "Create a matrix with placed random point")
-	] + Tool._args[:]
-
 	def __init__(self, args: list[str]):
-		Tool.__init__(self)
+		super().__init__()
+
+		self._args	= [
+			(("-n", "--new", "<x> <y>"), "Create a matrix with custom dimensions"),
+			(("-r", "--random", "<x> <y> <i>"), "Create a matrix with placed random point")
+		] + self._args[:]
 
 		self._execs = [
 			lambda x:self._new(x),

@@ -10,15 +10,15 @@ from core.tool import Tool
 class Shell(Tool):
 	command	= (("shell", "sh"), "(sh)ell")
 	name	= "Shell"
-	path = __file__
+	path	= __file__
 	version	= "0.1a"
 
-	_args	= [
-		(("-c", "--command", ""), "Run a bash command")
-	] + Tool._args[:]
-
 	def __init__(self, args: list[str]):
-		Tool.__init__(self)
+		super().__init__()
+
+		self._args = [
+			(("-c", "--command", ""), "Run a bash command")
+		] + self._args[:]
 
 		self._execs = [
 			lambda x:self._exec(x)

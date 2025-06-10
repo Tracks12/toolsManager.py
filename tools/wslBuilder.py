@@ -4,45 +4,37 @@
 from os import listdir, mkdir, remove, rmdir, system as shell
 from os.path import abspath, dirname, getsize
 
+import re
+
 from core import UNITS
 from core.icons import Icons
 from core.tool import Tool
 
+DISTRONAME_REGEX = str("(\\s)|([/:])")
+
 class WslBuilder(Tool):
 	command	= (("wslbuilder", "wb"), "(wb)wslbuilder")
 	name	= "WSLBuilder"
-	path = __file__
-	version	= "0.1a"
-
-	_args	= [
-		(("-c", "--create", "<name>"), "Create a wsl distribution"),
-		(("-d", "--delete", "<name>"), "Remove a wsl distribution image and disk"),
-		(("-D", "--full-delete", "<name>"), "Remove a wsl distribution image and disk with docker traces"),
-		(("-e", "--export", "<name>"), "Remove a wsl distribution into a tar image"),
-		(("-I", "--init", ""), "Init a wsl builder instance with docker"),
-		(("-l", "--list", ""), "List all wsl distributions"),
-		(("-s", "--start", "<name>"), "Launch a wsl instance"),
-	] + Tool._args[:]
-
-	__path = str(abspath(f"{dirname(abspath(__file__))}/../{name}"))
+	path	= __file__
+	version	= "1.0"
 
 	def __init__(self, args: list[str]):
-		Tool.__init__(self)
+		super().__init__()
 
-		try:
-			mkdir(self.__path)
-			print(f"{Icons.info}Create path workspace for {self.name} tool at {self.__path}")
+		self.__path = str(abspath(f"{dirname(abspath(__file__))}/../{self.name}"))
+		self.__setup()
 
-		except FileExistsError:
-			print(f"{Icons.info}Using {self.__path} for {self.name} workspace already exist")
+		self._args = [
+			(("-c", "--create", "<name>"), "Create a wsl distribution"),
+			(("-d", "--delete", "<name>"), "Remove a wsl distribution image and disk"),
+			(("-D", "--full-delete", "<name>"), "Remove a wsl distribution image and disk with docker traces"),
+			(("-e", "--export", "<name>"), "Export a wsl distribution into a tar image"),
+			(("-I", "--init", ""), "Init a wsl builder instance with docker"),
+			(("-l", "--list", ""), "List all wsl distributions"),
+			(("-s", "--start", "<name>"), "Launch a wsl instance"),
+		] + self._args[:]
 
-		except PermissionError:
-			print(f"{Icons.warn}Permission denied: Unable to create '{self.__path}'.")
-
-		except Exception as e:
-			print(f"{Icons.warn}An error occurred: {e}")
-
-		self._execs = [
+		self._execs= [
 			lambda x:self._create(x),
 			lambda x:self._delete(x),
 			lambda x:self._fullDelete(x),
@@ -56,9 +48,23 @@ class WslBuilder(Tool):
 
 	def __checkDockerStatus(self) -> bool:
 		return bool(shell(f"wsl service docker status"))
+	
+	def __setup(self) -> None:
+		try:
+			mkdir(self.__path)
+			print(f"{Icons.info}Create path workspace for {self.name} tool at {self.__path}")
+
+		except FileExistsError:
+			print(f"{Icons.info}Using {self.__path} for {self.name} workspace already exist")
+
+		except PermissionError:
+			print(f"{Icons.warn}Permission denied: Unable to create '{self.__path}'.")
+
+		except Exception as e:
+			print(f"{Icons.warn}An error occurred: {e}")
 
 	def _create(self, args: list[str]) -> None:
-		__distroName = args[0].replace(':', '-')
+		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
 		try:
@@ -85,7 +91,7 @@ class WslBuilder(Tool):
 
 	def _delete(self, args: list[str]) -> None:
 		__distros = listdir(self.__path)
-		__distroName = args[0].replace(':', '-')
+		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
 		try:
@@ -101,7 +107,7 @@ class WslBuilder(Tool):
 			print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
 
 	def _fullDelete(self, args: list[str]) -> None:
-		__distroName = args[0].replace(':', '-')
+		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
 		shell(f"wsl docker rm {__distroName}")
 		shell(f"wsl docker rmi {args[0]}")
@@ -110,7 +116,7 @@ class WslBuilder(Tool):
 
 	def _export(self, args: list[str]) -> None:
 		__distros = listdir(self.__path)
-		__distroName = args[0].replace(':', '-')
+		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
 		if(__distroName in __distros):
@@ -151,7 +157,7 @@ class WslBuilder(Tool):
 
 	def _start(self, args: list[str]) -> None:
 		__distros = listdir(self.__path)
-		__distroName = args[0].replace(':', '-')
+		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
 		if(__distroName in __distros):
 			shell(f"wsl -d {__distroName}")
