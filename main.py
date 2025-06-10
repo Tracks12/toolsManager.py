@@ -22,7 +22,7 @@ def arg() -> bool:
 	args = dict({
 		"prefix": tuple[tuple[tuple[str], str]]((
 			(("-l", "--list"), ""),
-			(("-t", "--tool"), "<toolName>"),
+			(("-t", "--tool"), "<tool>"),
 			(("-h", "--help"), ""),
 			(("-D", "--debug"), ""),
 			(("-v", "--version"), "")

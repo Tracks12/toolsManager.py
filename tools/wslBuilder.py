@@ -16,7 +16,7 @@ class WslBuilder(Tool):
 	command	= (("wslbuilder", "wb"), "(wb)wslbuilder")
 	name	= "WSLBuilder"
 	path	= __file__
-	version	= "0.1a"
+	version	= "1.0"
 
 	def __init__(self, args: list[str]):
 		super().__init__()
