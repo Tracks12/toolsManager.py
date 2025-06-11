@@ -25,7 +25,7 @@ class Config:
 				self.__splash	= bool(_["splash"])
 
 		except Exception:
-			print(f"{Icons.warn}Config file loading failed")
+			print(f"{Icons.err}Config file loading failed")
 			return(False)
 
 		return(True)
@@ -41,7 +41,7 @@ class Config:
 				dump(dict(_), cfgFile, sort_keys=True, indent=2)
 
 		except Exception:
-			print(f"{Icons.warn}Config file saving failed")
+			print(f"{Icons.err}Config file saving failed")
 			return(False)
 
 		return(True)

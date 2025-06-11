@@ -45,13 +45,18 @@ def arg() -> bool:
 				launch(tool, argv[2:len(argv)])
 
 	elif(argv[1] in args["prefix"][-3][0]): # -h, --help
-		print(f" {INFO['name']}")
-		print(f" Launching: python main.py <arg>", end="\n"*2)
-		print(f" Arguments:")
+		table = list[str]([
+			f"{INFO['name']} by {INFO['author']}",
+			f"Github: {INFO['github']}\n",
+			"Usage: python main.py <argument>\n",
+			f"Arguments:{' '*(34-len('Arguments:'))}Descriptions:"
+		])
 
 		for i, arg in enumerate(args["prefix"]):
 			left = f"{arg[0][0]}, {arg[0][1]} {arg[1]}"
-			print(f" {left}{' '*(30-len(left))}{args['desc'][i]}", end="\n"*(2 if(i in (1, len(args['desc'])-1)) else 1))
+			table.append(f"{left}{' '*(34-len(left))}{args['desc'][i]}{"\n"*(1 if(i in (1, len(args['desc'])-1)) else 0)}")
+
+		print("\n".join([ f" {t}" for t in table ]))
 
 	elif(argv[1] in args["prefix"][-2][0]): # -D, --debug
 		isLinux = bool(system() == "Linux")
@@ -88,34 +93,41 @@ def config(cfg: Config) -> bool:
 				isApplied = bool(False)
 
 				match(args[1]):
-					case "encode":
+					case("encode"):
 						isApplied = cfg.setEncoding(args[2])
 
-					case "splash":
+					case("splash"):
 						isApplied = cfg.setSplash(args[2].lower() == "true")
 
-				print(f'{Icons.info if(isApplied) else Icons.warn}{args[2]} {"is" if(isApplied) else "is not"} applied')
+				print(f'{Icons.info if(isApplied) else Icons.err}{args[2]} {"is" if(isApplied) else "is not"} applied')
 
-			except IndexError:
-					print(f"{Icons.warn}No value was entered !")
+			except(IndexError):
+				print(f"{Icons.warn}No value was entered !")
 
-			except Exception as e:
-				print(f"{Icons.warn}{e}")
+			except(Exception) as e:
+				print(f"{Icons.err}{e}")
 
 		elif(args[0] in commands[1][0]):
 			try:
+				output = list[str]([])
+
 				match(args[1]):
 					case "encode":
-						print(cfg.getEncoding())
+						output.append(cfg.getEncoding())
 
 					case "splash":
-						print(cfg.getSplash())
+						output.append(cfg.getSplash())
 
 					case "all":
-						print(f"encode: {cfg.getEncoding()}")
-						print(f"splash: {cfg.getSplash()}")
+						output.append(f"encode: {cfg.getEncoding()}")
+						output.append(f"splash: {cfg.getSplash()}")
 
-			except IndexError:
+					case _:
+						output.append(f"{Icons.warn}Uknown value was entered !"[1:-1])
+
+				print("\n".join([ f" {o}" for o in output ]), end="\n"*2)
+
+			except(IndexError):
 				print(f"{Icons.warn}No value was entered !")
 
 		elif(args[0] in commands[-2][0]):
@@ -134,8 +146,8 @@ def config(cfg: Config) -> bool:
 
 def main(cfg: Config) -> bool:
 	commands = list[tuple]([ tool.command for tool in TOOLS ] + [
-		(("settings", "set"), "(set)tings"),
-		(("version", "ver"), "(ver)sion"),
+		(("settings", "s"), "(s)ettings"),
+		(("version", "v"), "(v)ersion"),
 		(("help", "h"), "(h)elp"),
 		(("quit", "q"), "(q)uit")
 	])
@@ -160,7 +172,7 @@ def main(cfg: Config) -> bool:
 					break
 
 				except:
-					print(f'{Icons.warn}"{command[0][0]}" not implemented !')
+					print(f'{Icons.err}"{command[0][0]}" not implemented !')
 
 		if(not f):
 			if(args[0] in commands[-4][0]):

@@ -35,14 +35,14 @@ class Shell(Tool):
 
 			self._exec(args[1: len(args)])
 
-		except IndexError:
+		except(IndexError):
 			print(' To see more of command type "-h" or "--help" on arguments')
 
-		except ValueError as e:
+		except(ValueError) as e:
 			print(f"{Icons.warn}{e}")
 
-		except Exception:
-			print(f"{Icons.warn}{format_exc()}")
+		except(Exception):
+			print(f"{Icons.err}{format_exc()}")
 
 		return(False)
 

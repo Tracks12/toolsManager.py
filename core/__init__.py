@@ -10,8 +10,10 @@ from core.icons import Icons
 from core.tool import Tool
 
 INFO = dict[str, str]({
+	"author": "Florian Cardinal",
+	"github": "https://github.com/Tracks12/toolsManager.py",
 	"name": "toolsManager.py",
-	"version": "0.1"
+	"version": "0.2",
 })
 
 REGEX_ARGS	= str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
@@ -19,36 +21,37 @@ UNITS		= tuple[str](("o", "ko", "Mo", "Go", "To"))
 
 def helper(commands: tuple) -> None:
 	colors	= tuple[str]((Colors.cyan, Colors.yellow, Colors.red))
-	screen	= list[str]([ " List of commands:\n" ])
+	screen	= list[str]([ "List of commands:\n" ])
 
 	for i, command in enumerate(commands):
 		c	= int(1 if(i in range((len(commands)-4), (len(commands)-1))) else 0)
 		c	= int(2 if(i in range((len(commands)-1), (len(commands)))) else c)
 		sep	= str('\n' if(i in (len(commands)-5, len(commands)-2)) else '')
 
-		command = str(f" {colors[c]}{command[1]}{Colors.end}{sep}")
+		command = str(f"{colors[c]}{command[1]}{Colors.end}{sep}")
 
 		screen.append(command)
 
-	print(("\n").join(screen), end="\n\n")
+	print(("\n").join([ f" {s}" for s in screen ]), end="\n\n")
 
 def launch(tool: Tool, args: list[str]) -> bool:
 	try:
 		print(f'{Icons.play}Starting "{tool.name}" ...')
 		tool(args)
-	
-	except Exception:
-		print(f"{Icons.warn}{format_exc()}")
+
+	except(Exception):
+		print(f"{Icons.err}{format_exc()}")
 
 	finally:
 		print()
 		return(True)
 
 def sortTools(tools: list[Tool]) -> list[Tool]:
-	print(f"\n {' '*1}*  Name{' '*(12-len('Name'))}Command{' '*(16-len('Command'))}Path")
+	table = list[str]([ f" *  Name{' '*(14-len('Name'))}Command{' '*(16-len('Command'))}Path" ])
 	for i, tool in enumerate(tools, start=1):
-		print(f" {' '*(2-len(str(i)))}{i}. {tool.name}{' '*(12-len(tool.name))}{tool.command[1]}{' '*(16-len(tool.command[1]))}{tool.path}", end="\n"*(2 if(i == len(tools)) else 1))
+		table.append(f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. {tool.name}{' '*(14-len(tool.name))}{Colors.cyan}{tool.command[1]}{Colors.end}{' '*(16-len(tool.command[1]))}{Colors.yellow}{tool.path}{Colors.end}")
 
+	print(f"\n{'\n'.join([f" {t}" for t in table])}", end="\n"*2)
 	return(tools)
 
 def splash(spacing: int = 2) -> None:
