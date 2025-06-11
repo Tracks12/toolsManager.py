@@ -67,6 +67,17 @@ def splash(spacing: int = 2) -> None:
 		print(f"{' '*spacing}{row}", end="\n"*(2 if(i == 6) else 1))
 		sleep(.025)
 
+def stringSize(size: int) -> str:
+	size = [size, UNITS[0]]
+
+	for i in range(1, len(UNITS)):
+		size[0] /= 1000
+		size[1] = UNITS[i]
+		if(size[0] < 1024):
+			break
+
+	return(f"{round(size[0], 2)} {size[1]}")
+
 def version() -> dict[str, str]:
 	print(f" {INFO['name']} {INFO['version']}", end="\n"*2)
 	return(INFO)

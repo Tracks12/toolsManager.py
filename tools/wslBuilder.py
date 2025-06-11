@@ -6,7 +6,7 @@ from os.path import abspath, dirname, getsize
 
 import re
 
-from core import UNITS
+from core import stringSize
 from core.colors import Colors
 from core.icons import Icons
 from core.tool import Tool
@@ -143,15 +143,7 @@ class WslBuilder(Tool):
 
 		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Size{' '*(12-len('Size'))}Path" ])
 		for i, distro in enumerate(__distros, start=1):
-			size = [getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")), UNITS[0]]
-
-			for j in range(1, len(UNITS)):
-				size[0] /= 1000
-				size[1] = UNITS[j]
-				if(size[0] < 1024):
-					break
-
-			size = f"{round(size[0], 2)} {size[1]}"
+			size = stringSize(getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")))
 			table.append(f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. {Colors.cyan}{distro.replace('-', ':')}{Colors.end}{' '*(18-len(distro))}{size}{' '*(12-len(size))}{Colors.yellow}{abspath(f'{self.__path}/{distro}')}{Colors.end}")
 
 		print(f"\n{'\n'.join([ f" {t}" for t in table ])}")
@@ -160,7 +152,22 @@ class WslBuilder(Tool):
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
 		if(self.__checkExistDistro(__distroName)):
-			pass
+			__distroPath		= abspath(f"{self.__path}/{__distroName}")
+			__distroDiskName	= str("ext4.vhdx")
+			__distroImageName	= str(f"{__distroName}.tar")
+			__distroDiskPath	= abspath(f"{__distroPath}/{__distroDiskName}")
+			__distroImagePath	= abspath(f"{__distroPath}/{__distroImageName}")
+			__distroDiskSize	= stringSize(getsize(__distroDiskPath))
+			__distroImageSize	= stringSize(getsize(__distroImagePath))
+
+			table = list[str]([
+				f"* Name{' '*(8-len('Name'))}: {args[0]}",
+				f"* Path{' '*(8-len('Path'))}: {__distroPath}\n",
+				f"* Disk{' '*(8-len('Disk'))}: {__distroDiskName}{' '*(16-len(__distroDiskName))}({__distroDiskSize})",
+				f"* Image{' '*(8-len('Image'))}: {__distroImageName}{' '*(16-len(__distroImageName))}({__distroImageSize})"
+			])
+
+			print(f"\n{'\n'.join([ f"  {t}" for t in table ])}")
 
 	def _start(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
