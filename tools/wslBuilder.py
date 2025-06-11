@@ -163,8 +163,8 @@ class WslBuilder(Tool):
 			table = list[str]([
 				f"* Name{' '*(8-len('Name'))}: {args[0]}",
 				f"* Path{' '*(8-len('Path'))}: {__distroPath}\n",
-				f"* Disk{' '*(8-len('Disk'))}: {__distroDiskName}{' '*(16-len(__distroDiskName))}({__distroDiskSize})",
-				f"* Image{' '*(8-len('Image'))}: {__distroImageName}{' '*(16-len(__distroImageName))}({__distroImageSize})"
+				f"* Disk{' '*(8-len('Disk'))}: [{__distroDiskSize}] {__distroDiskName}",
+				f"* Image{' '*(8-len('Image'))}: [{__distroImageSize}] {__distroImageName}"
 			])
 
 			print(f"\n{'\n'.join([ f"  {t}" for t in table ])}")
