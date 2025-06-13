@@ -1,5 +1,13 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+r""" Docker image management for WSL.
+
+	This module allows for the creation and management of Docker images compatible with Windows
+	Subsystem for Linux (WSL). It facilitates the customization and integration of Docker images
+	into a WSL environment, simplifying application deployment within this environment.
+
+"""
 
 from os import listdir, mkdir, remove, rmdir, system as shell
 from os.path import abspath, dirname, getsize

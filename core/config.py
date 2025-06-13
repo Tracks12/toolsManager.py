@@ -1,5 +1,13 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+r""" Configuration management for tools.
+
+	This module provides functions to load, validate, and access configuration parameters essential
+	for the proper operation of tools. It supports various configuration formats and allows centralized
+	management of settings.
+
+"""
 
 from json import dump, load
 from os.path import abspath
@@ -47,9 +55,15 @@ class Config:
 		return(True)
 
 	def getEncoding(self) -> str:
+		""" Returns the encoding state, e.g. "ascii", "utf-8", "utf-16" or "utf-32"
+		"""
+
 		return(self.__encoding)
 
 	def getSplash(self) -> bool:
+		""" Returns the splash display state, e.g. True or False.
+    """
+
 		return(self.__splash)
 
 	def setEncoding(self, encoding: str = "utf-8") -> bool:

@@ -1,5 +1,14 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+r""" Base class for tool objects.
+
+	Defines the `Tool` class which serves as the foundational object for
+	creating individual tools compatible with the tools registry.
+	Provides core functionalities and interface methods to ensure
+	integration with the overall tool management system.
+
+"""
 
 from traceback import format_exc
 

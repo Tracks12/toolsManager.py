@@ -1,5 +1,18 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+r""" Package initialization for `core`.
+
+	This module initializes the `core` package by defining essential functions and variables,
+	such as `get_config()` for loading configurations and `initialize_logger()` for setting up logging.
+	It ensures that the core components are ready for use when the package is imported.
+
+	Constants:
+	- INFO: Contains application information such as version, git commit hash, and other metadata.
+	- REGEX_ARGS: A regular expression pattern used to parse and split argument strings into lists.
+	- UNITS: Units of measurement for bytes, including KB, MB, GB, TB, etc., to facilitate size conversions.
+
+"""
 
 from time import sleep
 from traceback import format_exc

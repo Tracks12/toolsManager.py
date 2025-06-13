@@ -1,22 +1,34 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from os import system as shell
-from platform import system
-from sys import argv, version_info
+try:
+	# --- Importation des dépendances internes ---
+	from os import system as shell
+	from platform import system
+	from sys import argv, version_info
 
-import re
+	if(version_info.major < 3):
+		raise(SystemError)
 
-if(system() == "Linux"):
-	import readline
+	import re
 
-if(version_info.major < 3):
+	if(system() == "Linux"): # Dépendances pour Linux
+		import readline
+
+	# --- Importation des dépendances internes ---
+	from core import INFO, REGEX_ARGS
+	from core import Colors, Config, Icons
+	from core import helper, launch, sortTools, splash, version
+
+	from tools import TOOLS
+
+except(SystemError):
 	print("/!\\ - Program must be run with Python 3")
 	exit()
 
-# Importation des dépendances internes
-from core import INFO, REGEX_ARGS, Colors, Config, Icons, helper, launch, sortTools, splash, version
-from tools import TOOLS
+except(ModuleNotFoundError) as e:
+	print(e)
+	exit()
 
 def arg() -> bool:
 	args = dict({

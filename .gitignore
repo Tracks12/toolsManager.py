@@ -1,5 +1,7 @@
-/WSLBuilder/
-__pycache__/
+.vscode/
 
+__pycache__/
 *.pyc
+
+/WSLBuilder/
 *.vhdx

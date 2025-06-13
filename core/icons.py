@@ -1,5 +1,13 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+r""" Abstract base class for icon handling.
+
+	Defines abstract classes to represent icons used in tools.
+	Provides a structure for consistent icon management and allows
+	extension for various icon sets or formats.
+
+"""
 
 from core.colors import Colors
 
