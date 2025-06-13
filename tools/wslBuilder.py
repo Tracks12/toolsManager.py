@@ -1,12 +1,22 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+r""" Docker image management for WSL.
+
+	This module allows for the creation and management of Docker images compatible with Windows
+	Subsystem for Linux (WSL). It facilitates the customization and integration of Docker images
+	into a WSL environment, simplifying application deployment within this environment.
+
+"""
+
 from os import listdir, mkdir, remove, rmdir, system as shell
-from os.path import abspath, dirname, getsize
+from os.path import abspath, dirname, getsize, isdir
 
 import re
+from token import EXACT_TOKEN_TYPES
 
-from core import UNITS
+from core import stringSize
+from core.colors import Colors
 from core.icons import Icons
 from core.tool import Tool
 
@@ -25,13 +35,14 @@ class WslBuilder(Tool):
 		self.__setup()
 
 		self._args = [
-			(("-c", "--create", "<name>"), "Create a wsl distribution"),
-			(("-d", "--delete", "<name>"), "Remove a wsl distribution image and disk"),
-			(("-D", "--full-delete", "<name>"), "Remove a wsl distribution image and disk with docker traces"),
-			(("-e", "--export", "<name>"), "Export a wsl distribution into a tar image"),
+			(("-c", "--create", "<distro>"), "Create a wsl distribution"),
+			(("-d", "--delete", "<distro>"), "Remove a wsl distribution image and disk"),
+			(("-D", "--full-delete", "<distro>"), "Remove a wsl distribution image and disk with docker traces"),
+			(("-e", "--export", "<distro>"), "Export a wsl distribution into a tar image"),
 			(("-I", "--init", ""), "Init a wsl builder instance with docker"),
 			(("-l", "--list", ""), "List all wsl distributions"),
-			(("-s", "--start", "<name>"), "Launch a wsl instance"),
+			(("-S", "--stat", "<distro>"), "Show statistics about a wsl distributions"),
+			(("-s", "--start", "<distro>"), "Launch a wsl instance")
 		] + self._args[:]
 
 		self._execs= [
@@ -41,27 +52,37 @@ class WslBuilder(Tool):
 			lambda x:self._export(x),
 			lambda x:self._init(),
 			lambda x:self._list(),
-			lambda x:self._start(x),
+			lambda x:self._stat(x),
+			lambda x:self._start(x)
 		] + self._execs[:]
 
 		self._run(args)
 
 	def __checkDockerStatus(self) -> bool:
-		return bool(shell(f"wsl service docker status"))
-	
+		return(bool(shell(f"wsl service docker status")))
+
+	def __checkExistDistro(self, distroName: str) -> bool:
+		__distros = listdir(self.__path)
+
+		if(distroName in __distros):
+			return(True)
+
+		print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
+		return(False)
+
 	def __setup(self) -> None:
 		try:
 			mkdir(self.__path)
 			print(f"{Icons.info}Create path workspace for {self.name} tool at {self.__path}")
 
-		except FileExistsError:
+		except(FileExistsError):
 			print(f"{Icons.info}Using {self.__path} for {self.name} workspace already exist")
 
-		except PermissionError:
+		except(PermissionError):
 			print(f"{Icons.warn}Permission denied: Unable to create '{self.__path}'.")
 
-		except Exception as e:
-			print(f"{Icons.warn}An error occurred: {e}")
+		except(Exception) as e:
+			print(f"{Icons.err}An error occurred: {e}")
 
 	def _create(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
@@ -86,25 +107,17 @@ class WslBuilder(Tool):
 			print(f"{Icons.warn}Wsl distribution already exist on workspace")
 
 		except(Exception) as e:
-			print(f"{Icons.warn}{e}")
+			print(f"{Icons.err}{e}")
 			rmdir(__distroPath)
 
 	def _delete(self, args: list[str]) -> None:
-		__distros = listdir(self.__path)
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
-		try:
-			if(__distroName in __distros):
-				shell(f"wsl --unregister {__distroName}")
-				remove(f"{__distroPath}/{__distroName}.tar")
-				rmdir(f"{__distroPath}")
-
-			else:
-				raise FileNotFoundError
-
-		except FileNotFoundError:
-			print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
+		if(self.__checkExistDistro(__distroName)):
+			shell(f"wsl --unregister {__distroName}")
+			remove(f"{__distroPath}/{__distroName}.tar")
+			rmdir(f"{__distroPath}")
 
 	def _fullDelete(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
@@ -115,52 +128,66 @@ class WslBuilder(Tool):
 		self._delete(args)
 
 	def _export(self, args: list[str]) -> None:
-		__distros = listdir(self.__path)
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
-		if(__distroName in __distros):
+		if(self.__checkExistDistro(__distroName)):
 			shell(f"wsl --export {__distroName} {__distroPath}/{__distroName}.tar")
-
-		else:
-			print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
 
 	def _init(self) -> None:
 		__libspath = abspath(f"{self.__path}/../libs/wslbuilder")
 
-		shell(f"wsl --import wslbuilder {__libspath} {__libspath}/wslbuilder.tar")
-		shell("wsl -s wslbuilder")
-		shell("wsl apk update")
-		shell("wsl apk add docker openrc")
+		try:
+			if(not isdir(__libspath)):
+				raise(FileNotFoundError)
 
-		if(self.__checkDockerStatus):
-			if(shell("wsl service docker start")):
-				shell('wsl touch "/../run/openrc/softlevel"')
-				shell("wsl service docker start")
+			shell(f"wsl --import wslbuilder {__libspath} {__libspath}/wslbuilder.tar")
+			shell("wsl -s wslbuilder")
+			shell("wsl apk update")
+			shell("wsl apk add docker openrc")
+
+			if(self.__checkDockerStatus()):
+				if(shell("wsl service docker start")):
+					shell('wsl touch "/../run/openrc/softlevel"')
+					shell("wsl service docker start")
+
+		except(FileNotFoundError):
+			print(f"{Icons.err}WSLBuilder libs doesn't exist at {__libspath}")
+			print(f'{Icons.tips}Don\'t forget to run "python setup.py" to unpack the libs')
 
 	def _list(self) -> None:
 		__distros = listdir(self.__path)
 
-		print(f"\n {' '*1}*  Name{' '*(18-len('Name'))}Size{' '*(12-len('Size'))}Path")
+		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Size{' '*(12-len('Size'))}Path" ])
 		for i, distro in enumerate(__distros, start=1):
-			size = [getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")), UNITS[0]]
+			size = stringSize(getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")))
+			table.append(f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. {Colors.cyan}{distro.replace('-', ':')}{Colors.end}{' '*(18-len(distro))}{size}{' '*(12-len(size))}{Colors.yellow}{abspath(f'{self.__path}/{distro}')}{Colors.end}")
 
-			for j in range(1, len(UNITS)):
-				size[0] /= 1000
-				size[1] = UNITS[j]
-				if(size[0] < 1024):
-					break
+		print(f"\n{'\n'.join([ f" {t}" for t in table ])}")
 
-			size = f"{round(size[0], 2)} {size[1]}"
-
-			print(f" {' '*(2-len(str(i)))}{i}. {distro.replace('-', ':')}{' '*(18-len(distro))}{size}{' '*(12-len(size))}{abspath(f'{self.__path}/{distro}')}")
-
-	def _start(self, args: list[str]) -> None:
-		__distros = listdir(self.__path)
+	def _stat(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
-		if(__distroName in __distros):
-			shell(f"wsl -d {__distroName}")
+		if(self.__checkExistDistro(__distroName)):
+			__distroPath		= abspath(f"{self.__path}/{__distroName}")
+			__distroDiskName	= str("ext4.vhdx")
+			__distroImageName	= str(f"{__distroName}.tar")
+			__distroDiskPath	= abspath(f"{__distroPath}/{__distroDiskName}")
+			__distroImagePath	= abspath(f"{__distroPath}/{__distroImageName}")
+			__distroDiskSize	= stringSize(getsize(__distroDiskPath))
+			__distroImageSize	= stringSize(getsize(__distroImagePath))
 
-		else:
-			print(f"{Icons.warn}Wsl distribution doesn't exist on workspace")
+			table = list[str]([
+				f"* Name{' '*(8-len('Name'))}: {args[0]}",
+				f"* Path{' '*(8-len('Path'))}: {__distroPath}\n",
+				f"* Disk{' '*(8-len('Disk'))}: [{__distroDiskSize}] {__distroDiskName}",
+				f"* Image{' '*(8-len('Image'))}: [{__distroImageSize}] {__distroImageName}"
+			])
+
+			print(f"\n{'\n'.join([ f"  {t}" for t in table ])}")
+
+	def _start(self, args: list[str]) -> None:
+		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
+
+		if(self.__checkExistDistro(__distroName)):
+			shell(f"wsl -d {__distroName}")

@@ -1,5 +1,13 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+r""" Abstract base class for color handling.
+
+	Defines abstract classes and interfaces to standardize color management
+	across tools. It provides a foundation for implementing color schemes
+	and palettes compatible with different output formats.
+
+"""
 
 from platform import system
 

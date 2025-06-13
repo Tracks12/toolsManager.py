@@ -1,5 +1,13 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+r""" Configuration management for tools.
+
+	This module provides functions to load, validate, and access configuration parameters essential
+	for the proper operation of tools. It supports various configuration formats and allows centralized
+	management of settings.
+
+"""
 
 from json import dump, load
 from os.path import abspath
@@ -25,7 +33,7 @@ class Config:
 				self.__splash	= bool(_["splash"])
 
 		except Exception:
-			print(f"{Icons.warn}Config file loading failed")
+			print(f"{Icons.err}Config file loading failed")
 			return(False)
 
 		return(True)
@@ -41,15 +49,21 @@ class Config:
 				dump(dict(_), cfgFile, sort_keys=True, indent=2)
 
 		except Exception:
-			print(f"{Icons.warn}Config file saving failed")
+			print(f"{Icons.err}Config file saving failed")
 			return(False)
 
 		return(True)
 
 	def getEncoding(self) -> str:
+		""" Returns the encoding state, e.g. "ascii", "utf-8", "utf-16" or "utf-32"
+		"""
+
 		return(self.__encoding)
 
 	def getSplash(self) -> bool:
+		""" Returns the splash display state, e.g. True or False.
+    """
+
 		return(self.__splash)
 
 	def setEncoding(self, encoding: str = "utf-8") -> bool:
