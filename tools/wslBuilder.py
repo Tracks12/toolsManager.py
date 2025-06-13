@@ -10,9 +10,10 @@ r""" Docker image management for WSL.
 """
 
 from os import listdir, mkdir, remove, rmdir, system as shell
-from os.path import abspath, dirname, getsize
+from os.path import abspath, dirname, getsize, isdir
 
 import re
+from token import EXACT_TOKEN_TYPES
 
 from core import stringSize
 from core.colors import Colors
@@ -136,15 +137,23 @@ class WslBuilder(Tool):
 	def _init(self) -> None:
 		__libspath = abspath(f"{self.__path}/../libs/wslbuilder")
 
-		shell(f"wsl --import wslbuilder {__libspath} {__libspath}/wslbuilder.tar")
-		shell("wsl -s wslbuilder")
-		shell("wsl apk update")
-		shell("wsl apk add docker openrc")
+		try:
+			if(not isdir(__libspath)):
+				raise(FileNotFoundError)
 
-		if(self.__checkDockerStatus()):
-			if(shell("wsl service docker start")):
-				shell('wsl touch "/../run/openrc/softlevel"')
-				shell("wsl service docker start")
+			shell(f"wsl --import wslbuilder {__libspath} {__libspath}/wslbuilder.tar")
+			shell("wsl -s wslbuilder")
+			shell("wsl apk update")
+			shell("wsl apk add docker openrc")
+
+			if(self.__checkDockerStatus()):
+				if(shell("wsl service docker start")):
+					shell('wsl touch "/../run/openrc/softlevel"')
+					shell("wsl service docker start")
+
+		except(FileNotFoundError):
+			print(f"{Icons.err}WSLBuilder libs doesn't exist at {__libspath}")
+			print(f'{Icons.tips}Don\'t forget to run "python setup.py" to unpack the libs')
 
 	def _list(self) -> None:
 		__distros = listdir(self.__path)
