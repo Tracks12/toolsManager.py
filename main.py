@@ -105,11 +105,17 @@ def config(cfg: Config) -> bool:
 				isApplied = bool(False)
 
 				match(args[1]):
+					case("colors"):
+						isApplied = cfg.setColors(args[2])
+
 					case("encode"):
 						isApplied = cfg.setEncoding(args[2])
 
 					case("splash"):
 						isApplied = cfg.setSplash(args[2].lower() == "true")
+					
+					case(_):
+						raise(Exception("Uknown property !"))
 
 				print(f'{Icons.info if(isApplied) else Icons.err}{args[2]} {"is" if(isApplied) else "is not"} applied')
 
@@ -124,6 +130,9 @@ def config(cfg: Config) -> bool:
 				output = list[str]([])
 
 				match(args[1]):
+					case "colors":
+						output.append(cfg.getColors())
+
 					case "encode":
 						output.append(cfg.getEncoding())
 
@@ -131,6 +140,7 @@ def config(cfg: Config) -> bool:
 						output.append(cfg.getSplash())
 
 					case "all":
+						output.append(f"colors: {cfg.getColors()}")
 						output.append(f"encode: {cfg.getEncoding()}")
 						output.append(f"splash: {cfg.getSplash()}")
 

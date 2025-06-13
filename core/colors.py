@@ -9,10 +9,22 @@ r""" Abstract base class for color handling.
 
 """
 
+from json import load
+from os.path import abspath
 from platform import system
 
+ENABLE_COLOR = bool(system() == "Linux")
+
+try:
+	with open(abspath("config.json"), "r", encoding="utf-8") as cfgFile:
+		_ = dict[str, str | bool](load(cfgFile))
+		ENABLE_COLOR = _["colors"]
+
+except:
+	pass
+
 class Colors:
-	if(system() == "Linux"):
+	if(ENABLE_COLOR):
 		bold	: str	= "\033[1m"
 		italic	: str	= "\033[3m"
 
