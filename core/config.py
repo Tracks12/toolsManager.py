@@ -14,8 +14,48 @@ from os.path import abspath
 
 from core.icons import Icons
 
+ACCEPT_ENCODING	: tuple[str] = ("ascii", "utf-8", "utf-16", "utf-32")
+
 class Config:
-	ACCEPT_ENCODING	: tuple[str] = ("ascii", "utf-8", "utf-16", "utf-32")
+	""" Configuration manager object for the program.
+
+		This class handles the loading, saving, and manipulation of a configuration file 
+		used by the program. It allows setting and retrieving parameters like CLI color usage, 
+		character encoding, and splash screen visibility.
+
+		Attributes:
+			loaded (bool): Indicates whether the configuration was successfully loaded at initialization.
+
+		Private Attributes:
+			__colors (bool): Whether colored output is enabled in the CLI.
+			__encoding (str): Encoding used for reading/writing the configuration file.
+			__path (str): Absolute path to the JSON configuration file.
+			__splash (bool): Whether the splash screen is enabled at startup.
+
+		Methods:
+			getColors() -> bool:
+				Returns the current state of CLI color output.
+
+			getEncoding() -> str:
+				Returns the currently set encoding.
+
+			getSplash() -> bool:
+				Returns whether the splash screen is enabled.
+
+			setColors(colors: bool = False) -> bool:
+				Updates the CLI color state and saves the configuration.
+
+			setEncoding(encoding: str = "utf-8") -> bool:
+				Updates the encoding value if it's allowed and saves the configuration.
+
+			setSplash(splash: bool = True) -> bool:
+				Updates the splash screen setting and saves the configuration.
+
+		Notes:
+			- The configuration file must be in JSON format with the keys: "colors", "encoding", and "splash".
+			- Accepted encodings are defined in the module-level constant `ACCEPT_ENCODING`.
+
+	"""
 
 	__colors	: bool	= False
 	__encoding	: str	= "utf-8"
@@ -116,7 +156,7 @@ class Config:
 
 		"""
 
-		if(encoding.lower() in self.ACCEPT_ENCODING):
+		if(encoding.lower() in ACCEPT_ENCODING):
 			self.__encoding = str(encoding)
 			self.__save()
 
@@ -140,3 +180,76 @@ class Config:
 		self.__save()
 
 		return(True)
+
+def getConfig(cfg: Config, prop: str) -> bool:
+	""" Interface to get a config displayer
+
+		Parameters:
+
+			cfg Config
+				the config object instance
+
+			prop str
+				the string of property to show
+				can be "all" to display whole settings values
+
+		Return a bool to validate the output
+
+	"""
+
+	__output = list[str]([])
+	__gets = (
+		("colors", lambda:cfg.getColors()),
+		("encode", lambda:cfg.getEncoding()),
+		("splash", lambda:cfg.getSplash())
+	)
+
+	if(prop == "all"):
+		for r, g in __gets:
+			__output.append(f"{r}: {g()}")
+
+	elif(prop in [ r for r, g in __gets ]):
+		for r, g in __gets:
+			if(prop == r):
+				__output.append(g())
+
+	else:
+		__output.append(f"{Icons.warn}Uknown value was entered !"[1:-1])
+
+	print("\n".join([ f" {o}" for o in __output ]), end="\n"*2)
+	return(True)
+
+def setConfig(cfg: Config, prop: str, val: str) -> bool:
+	""" Interface to set a config property on config object
+
+		Parameters:
+
+			cfg Config
+				the config object instance
+
+			prop str
+				the string of property to update
+
+			val str
+				the new value of setting prop to update
+
+		Return a bool to validate the applied setting
+
+		Raise an Exception if the property doen't know
+
+	"""
+
+	__isApplied	= bool(False)
+	__sets		= (
+		("colors", lambda v:cfg.setColors(v.lower() == "true")),
+		("encode", lambda v:cfg.setEncoding(v)),
+		("splash", lambda v:cfg.setSplash(v.lower() == "true"))
+	)
+
+	for r, s in __sets:
+		if(prop == r):
+			__isApplied = s(val)
+			print(f'{Icons.info if(__isApplied) else Icons.err}new {prop} {"is" if(__isApplied) else "is not"} applied')
+			return(__isApplied)
+
+	raise(Exception("Uknown property !"))
