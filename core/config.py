@@ -9,8 +9,9 @@ r""" Configuration management for tools.
 
 """
 
-from json import dump, load
+from json import JSONDecodeError, dump, load
 from os.path import abspath
+from traceback import format_exc
 
 from core.icons import Icons
 
@@ -80,7 +81,12 @@ class Config:
 				self.__encoding	= str(_["encoding"])
 				self.__splash	= bool(_["splash"])
 
-		except(Exception):
+		except(FileNotFoundError):
+			print(f"{Icons.err}No config file found")
+			print(f"{Icons.info}Recreate config file with default settings")
+			self.__save()
+
+		except(JSONDecodeError, KeyError, Exception):
 			print(f"{Icons.err}Config file loading failed")
 			return(False)
 
