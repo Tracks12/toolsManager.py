@@ -26,7 +26,7 @@ INFO = dict[str, str]({
 	"author": "Florian Cardinal",
 	"github": "https://github.com/Tracks12/toolsManager.py",
 	"name": "toolsManager.py",
-	"version": "0.2",
+	"version": "0.1",
 })
 
 REGEX_ARGS	= str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
