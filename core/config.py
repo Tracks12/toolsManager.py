@@ -7,6 +7,9 @@ r""" Configuration management for tools.
 	for the proper operation of tools. It supports various configuration formats and allows centralized
 	management of settings.
 
+	Constants:
+	- ACCEPT_ENCODING: Contains application encoding, including "ascii", "utf-8", "utf-16", "utf-32".
+
 """
 
 from json import JSONDecodeError, dump, load
@@ -16,6 +19,8 @@ from traceback import format_exc
 from core.icons import Icons
 
 ACCEPT_ENCODING	: tuple[str] = ("ascii", "utf-8", "utf-16", "utf-32")
+""" Contains application encoding, including "ascii", "utf-8", "utf-16", "utf-32"
+"""
 
 class Config:
 	""" Configuration manager object for the program.
@@ -34,6 +39,7 @@ class Config:
 			__splash (bool): Whether the splash screen is enabled at startup.
 
 		Methods:
+
 			getColors() -> bool:
 				Returns the current state of CLI color output.
 
@@ -53,8 +59,8 @@ class Config:
 				Updates the splash screen setting and saves the configuration.
 
 		Notes:
-			- The configuration file must be in JSON format with the keys: "colors", "encoding", and "splash".
-			- Accepted encodings are defined in the module-level constant `ACCEPT_ENCODING`.
+		- The configuration file must be in JSON format with the keys: "colors", "encoding", and "splash".
+		- Accepted encodings are defined in the module-level constant `ACCEPT_ENCODING`.
 
 	"""
 
