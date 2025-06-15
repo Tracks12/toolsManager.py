@@ -10,7 +10,7 @@ r""" Package initialization for `core`.
 	Constants:
 	- INFO: Contains application information such as version, git commit hash, and other metadata.
 	- REGEX_ARGS: A regular expression pattern used to parse and split argument strings into lists.
-	- UNITS: Units of measurement for bytes, including KB, MB, GB, TB, etc., to facilitate size conversions.
+	- UNITS: Units of measurement for bytes, including b, Kb, Mb, Gb, Tb, etc., to facilitate size conversions.
 
 """
 
@@ -28,9 +28,16 @@ INFO = dict[str, str]({
 	"name": "toolsManager.py",
 	"version": "0.1",
 })
+""" Contains application information such as version, git commit hash, and other metadata
+"""
 
-REGEX_ARGS	= str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
-UNITS		= tuple[str](("o", "ko", "Mo", "Go", "To"))
+REGEX_ARGS = str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
+""" A regular expression pattern used to parse and split argument strings into lists
+"""
+
+UNITS = tuple[str](("b", "Kb", "Mb", "Gb", "Tb"))
+""" Units of measurement for bytes, including b, Kb, Mb, Gb, Tb, etc., to facilitate size conversions
+"""
 
 def helper(commands: tuple) -> None:
 	colors	= tuple[str]((Colors.cyan, Colors.yellow, Colors.red))
