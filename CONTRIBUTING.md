@@ -59,20 +59,41 @@ class Hello(Tool):
 
 		self._run(args)
 
-	def _sayHello(user: str) -> bool:
-		print(f"Hello {user} ! :D")
+	def _sayHello(self, args: list[str]) -> bool:
+		print(f"Hello world :D")
 		return(True)
 ```
 
 #### 🚨 Non-compliant example:
 
 ```python
+# ❌ Missing environment & encoding declarations
+
 # tools/hello.py
 
 # ❌ Missing inheritance from Tool
 class Hello:
-    def run(self):
-        ...
+
+	# ❌ Missing Tool porperties command, name, path & version
+
+	def __init__(self, args: list[str]):
+		super().__init__()
+
+		self._args	= [
+			(("-s", "--say-hello", "<user>"), "Say hello to the user")
+		] + self._args[:]
+
+		self._execs = [
+			lambda x:self.hey(x)
+		] + self._execs[:]
+
+		self._run(args)
+
+	# ❌ Bad name compliance
+	def hey(self, args: list[str]) -> bool:
+		print(f"Goodbye world :(")
+		return(True)
+
 ```
 
 ## 🧪 Tests

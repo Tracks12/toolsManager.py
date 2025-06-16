@@ -14,7 +14,6 @@ r""" Configuration management for tools.
 
 from json import JSONDecodeError, dump, load
 from os.path import abspath
-from traceback import format_exc
 
 from core.icons import Icons
 
