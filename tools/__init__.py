@@ -15,7 +15,7 @@ from core.tool import Tool
 
 from tools.matrix import Matrix
 from tools.shell import Shell
-from tools.wslBuilder import WslBuilder
+from tools.wslbuilder import WslBuilder
 
 TOOLS: list[Tool] = [
 	Matrix,

@@ -96,6 +96,9 @@ class Hello:
 
 ```
 
+> [!Tip]
+> You can create you own tool by typing `$ python main.py -g`
+
 ## 🧪 Tests
 
 - Tests are currently manual.

@@ -18,6 +18,7 @@ try:
 	from core import INFO, REGEX_ARGS
 	from core import helper, launch, sortTools, splash, version
 	from core.colors import Colors
+	from core.generate import Generate
 	from core.icons import Icons
 	from core.config import Config, getConfig, setConfig
 
@@ -34,6 +35,7 @@ except(ModuleNotFoundError) as e:
 def arg(cfg: Config) -> bool:
 	__args = dict({
 		"prefix": tuple[tuple[tuple[str], str]]((
+			(("-g", "--generate"), ""),
 			(("-l", "--list"), ""),
 			(("-s", "--set"), "<prop> <value>"),
 			(("-t", "--tool"), "<tool>"),
@@ -42,6 +44,7 @@ def arg(cfg: Config) -> bool:
 			(("-v", "--version"), "")
 		)),
 		"desc": tuple[str | tuple[str]]((
+			"Generate a tool with interactive inputs",
 			"List all registered python tools",
 			("Apply new configuration value on property", "prop: colors|encode|splash"),
 			"Start a selected tools by name",
@@ -52,13 +55,16 @@ def arg(cfg: Config) -> bool:
 	})
 
 	try:
-		if(argv[1] in __args["prefix"][0][0]): # -l, --list
+		if(argv[1] in __args["prefix"][0][0]): # -g, --generate
+			Generate()
+
+		elif(argv[1] in __args["prefix"][1][0]): # -l, --list
 			sortTools(TOOLS)
 
-		elif(argv[1] in __args["prefix"][1][0]): # -s, --set
+		elif(argv[1] in __args["prefix"][2][0]): # -s, --set
 			setConfig(cfg, argv[2], argv[3])
 
-		elif(argv[1] in __args["prefix"][2][0]): # -t, --tool
+		elif(argv[1] in __args["prefix"][3][0]): # -t, --tool
 			for tool in TOOLS:
 				if(argv[2] in tool.command[0]):
 					launch(tool, argv[2:len(argv)])
