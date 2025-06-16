@@ -22,6 +22,7 @@ ACCEPT_ENCODING	: tuple[str] = ("ascii", "utf-8", "utf-16", "utf-32")
 """
 
 class Config:
+
 	""" Configuration manager object for the program.
 
 		This class handles the loading, saving, and manipulation of a configuration file 

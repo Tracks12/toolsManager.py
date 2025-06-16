@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-r""" Module to permit a developer to create own tool
+r""" Module to allow developers to generate a new tool skeleton.
+
+	This script creates a Python file in the `tools/` directory with a template
+	class inheriting from `Tool`. It prompts the user for the tool name, CLI
+	argument, and alias, and inserts them into the class definition.
+
+	The generated file is ready to be customized and integrated into the main project.
+
 """
 
 from os import listdir
@@ -47,6 +54,31 @@ class Hello(Tool):
 
 class Generate:
 
+	""" Handles the creation of a new tool template file inside the `tools/` directory.
+
+		Attributes:
+			__cfg (Config): Configuration instance used to get encoding settings.
+			__encoding (str): File encoding used to write the new tool.
+			__path (str): Full path to the newly generated tool file.
+			__defaultName (str): Default tool name if none is provided by the user.
+
+		Workflow:
+			1. Prompt the user for tool name, argument, and alias.
+			2. Format and inject them into a Python class template.
+			3. Save the new file in the `tools/` directory.
+
+		Raises:
+			Exception: If the target tool file already exists.
+
+		Example:
+			>>> Generate()
+			Tool Name [Hello]: Hello
+			Tool Argument [hello]: greet
+			Tool Alias [hel]: grt
+			# → tools/hello.py generated with CLI command (grt)greet
+
+	"""
+
 	__cfg			= Config()
 	__encoding		= "utf-8"
 	__path			= abspath("tools/")
@@ -66,6 +98,19 @@ class Generate:
 		self.__save(__template)
 
 	def __createTemplate(self, name: str, argument: str, alias: str, concat: str) -> str:
+		""" Builds the Python class template with user-defined values injected.
+
+			Args:
+				name (str): Name of the tool class.
+				argument (str): CLI argument associated with the tool.
+				alias (str): Short alias for the CLI command.
+				concat (str): Concatenation of alias and argument for the command pattern.
+
+			Returns:
+				str: A string representing the complete Python file content ready to be written.
+
+		"""
+
 		template = TOOL_TEMPLATE
 		template = template.replace("{name}", name)
 		template = template.replace("{argument}", argument)
@@ -75,6 +120,16 @@ class Generate:
 		return(template)
 
 	def __save(self, template: str) -> bool:
+		""" Saves the generated template into the tools directory.
+
+			Args:
+				template (str): The full Python code to be written to a new `.py` file.
+
+			Returns:
+				bool: True if file was created successfully, False otherwise.
+
+		"""
+
 		try:
 			__tools	= listdir(abspath(dirname(self.__path)))
 			__tool	= basename(self.__path)
