@@ -67,7 +67,10 @@ class Tool:
 			Args:
 				args (list[str]): Command-line arguments passed to the tool.
 
-    """
+			Returns:
+				bool: True if command was launched, False otherwise.
+
+		"""
 
 		try:
 			for i, a in enumerate(self._args):

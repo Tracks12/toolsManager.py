@@ -75,7 +75,8 @@ class Config:
 	def __load(self) -> bool:
 		""" Private method to load the configuration file
 
-			Returns the loading success statement, e.g. True or False.
+			Returns:
+				bool: the loading success statement, e.g. True or False.
 
 		"""
 
@@ -101,7 +102,8 @@ class Config:
 	def __save(self) -> bool:
 		""" Private method to save the current configuration
 
-			Returns the saving success statement, e.g. True or False.
+			Returns:
+				bool: the saving success statement, e.g. True or False.
 
 		"""
 
@@ -122,19 +124,31 @@ class Config:
 		return(True)
 
 	def getColors(self) -> bool:
-		""" Returns the colors display state, e.g. True or False.
+		""" Get the current colors display settings
+
+			Returns:
+				bool: the colors display state, e.g. True or False.
+
 		"""
 
 		return(self.__colors)
 
 	def getEncoding(self) -> str:
-		""" Returns the encoding state, e.g. "ascii", "utf-8", "utf-16" or "utf-32"
+		""" Get the current encoding string settings
+
+			Returns:
+				str: the encoding state, e.g. "ascii", "utf-8", "utf-16" or "utf-32"
+
 		"""
 
 		return(self.__encoding)
 
 	def getSplash(self) -> bool:
-		""" Returns the splash display state, e.g. True or False.
+		""" Get the current splash display settings
+
+			Returns:
+				bool: the splash display state, e.g. True or False.
+
 		"""
 
 		return(self.__splash)
@@ -143,11 +157,10 @@ class Config:
 		""" Apply new colors state display on the whole cli
 
 			Parameters:
+				colors (bool): the state between True or False.
 
-				colors bool
-					the state between True or False
-
-			Return a bool to validate the updating
+			Returns:
+				bool: True to validate the updating, False otherwise.
 
 		"""
 
@@ -160,11 +173,10 @@ class Config:
 		""" Apply new encoding value on settings
 
 			Parameters:
+				encoding (str): the string of the new encoding to use
 
-				encoding str
-					the string of the new encoding to use
-
-			Return a bool to validate the updating
+			Returns:
+				bool: True to validate the updating, False otherwise.
 
 		"""
 
@@ -180,11 +192,10 @@ class Config:
 		""" Apply new splash state display on main prompt
 
 			Parameters:
+				splash (bool): the state between True or False
 
-				splash bool
-					the state between True or False
-
-			Return a bool to validate the updating
+			Returns:
+				bool: True to validate the updating, False otherwise.
 
 		"""
 
@@ -197,15 +208,13 @@ def getConfig(cfg: Config, prop: str) -> bool:
 	""" Interface to get a config displayer
 
 		Parameters:
-
-			cfg Config
-				the config object instance
-
-			prop str
-				the string of property to show
+			cfg (Config): the config object instance
+			prop (str): the string of property to show.
+			
 				can be "all" to display whole settings values
 
-		Return a bool to validate the output
+		Returns:
+			bool: True to validate the output, False otherwise.
 
 	"""
 
@@ -235,17 +244,12 @@ def setConfig(cfg: Config, prop: str, val: str) -> bool:
 	""" Interface to set a config property on config object
 
 		Parameters:
+			cfg (Config): the config object instance
+			prop (str): the string of property to update
+			val (str): the new value of setting prop to update
 
-			cfg Config
-				the config object instance
-
-			prop str
-				the string of property to update
-
-			val str
-				the new value of setting prop to update
-
-		Return a bool to validate the applied setting
+		Returns:
+			bool: True if the settings is validated, False otherwise.
 
 		Raise an Exception if the property doen't know
 

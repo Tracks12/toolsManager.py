@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 try:
-	# --- Importation des dépendances internes ---
+	# --- Importing external dependencies ---
 	from os import system as shell
 	from platform import system
 	from re import split
@@ -11,10 +11,10 @@ try:
 	if(version_info.major < 3):
 		raise(RuntimeError)
 
-	if(system() == "Linux"): # Dépendances pour Linux
+	if(system() == "Linux"): # Dependencies for Linux
 		import readline
 
-	# --- Importation des dépendances internes ---
+	# --- Importing internal dependencies ---
 	from core import INFO, REGEX_ARGS
 	from core import helper, launch, sortTools, splash, version
 	from core.colors import Colors
@@ -22,6 +22,7 @@ try:
 	from core.icons import Icons
 	from core.config import Config, getConfig, setConfig
 
+	# --- Importing the tool registry ---
 	from tools import TOOLS
 
 except(RuntimeError) as e:
@@ -33,6 +34,16 @@ except(ModuleNotFoundError) as e:
 	exit()
 
 def arg(cfg: Config) -> bool:
+	""" Launch method in argument mode
+
+		Args:
+			cfg (Config): the user config instance
+
+		Returns:
+			bool: True value when exiting, False on exception
+
+	"""
+
 	__args = dict({
 		"prefix": tuple[tuple[tuple[str], str]]((
 			(("-g", "--generate"), ""),
@@ -103,6 +114,16 @@ def arg(cfg: Config) -> bool:
 	return(True)
 
 def config(cfg: Config) -> bool:
+	""" Config function to apply user settings
+
+		Args:
+			cfg (Config): the user config instance
+
+		Returns:
+			bool: True value when exiting
+
+	"""
+
 	__cmds = list[tuple]([
 		(("set", "s"), "(s)et"),
 		(("get", "g"), "(g)et"),
@@ -150,6 +171,16 @@ def config(cfg: Config) -> bool:
 	return(True)
 
 def main(cfg: Config) -> bool:
+	""" Main launch method
+
+		Args:
+			cfg (Config): the user config instance
+
+		Returns:
+			bool: True value when exiting
+
+	"""
+
 	__cmds = list[tuple]([ tool.command for tool in TOOLS ] + [
 		(("settings", "s"), "(s)ettings"),
 		(("version", "v"), "(v)ersion"),

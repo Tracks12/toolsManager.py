@@ -22,3 +22,4 @@ TOOLS: list[Tool] = [
 	Shell,
 	WslBuilder,
 ]
+""" Tools registry """
