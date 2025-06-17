@@ -12,6 +12,18 @@ r""" Abstract base class for icon handling.
 from core.colors import Colors
 
 class Icons:
+
+	""" CLI icons registry
+
+		Attributes:
+			err (str): Error icon `[!]`
+			warn (str): Warning icon `/!\`
+			info (str): Information icon `(i)`
+			tips (str): Tip icon `(?)`
+			play (str): Play icon `(>)`
+
+	"""
+
 	err: str = f" {Colors.bold}{Colors.red}[!]{Colors.end} - "
 	warn: str = f" {Colors.bold}{Colors.yellow}/!\\{Colors.end} - "
 	info: str = f" {Colors.bold}{Colors.blue}(i){Colors.end} - "
