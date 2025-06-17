@@ -11,11 +11,10 @@ A multi-tool with a generic template for developing management tools like WSLBui
     - [II.1 Dependencies](#ii1-dependencies)
     - [II.2 WSL / Docker](#ii2-wsl--docker)
   - [III. Uses](#iii-uses)
-    - [III.1 Tool Management](#iii1-tool-management)
-    - [III.2 WSL Management with WSLBuilder](#iii2-wsl-management-with-wslbuilder)
-  - [IV. Options \& Configurations](#iv-options--configurations)
-  - [V. Contributing](#v-contributing)
-  - [VI. License](#vi-license)
+  - [IV Tool Management](#iv-tool-management)
+  - [V. Options \& Configurations](#v-options--configurations)
+  - [VI. Contributing](#vi-contributing)
+  - [VII. License](#vii-license)
 
 ## I. Preview
 
@@ -55,7 +54,7 @@ A multi-tool with a generic template for developing management tools like WSLBui
 
 ## III. Uses
 
-Command prompt: `$python main.py <argument>`
+Command prompt: `$ python main.py <argument>`
 
 | Arguments             | Values ​             ​| Descriptions                                |
 | --------------------- | ------------------- | ------------------------------------------- |
@@ -69,15 +68,11 @@ Command prompt: `$python main.py <argument>`
 
 [Summary](#summary)
 
-### III.1 Tool Management
+## IV Tool Management
 
 [Summary](#summary)
 
-### III.2 WSL Management with WSLBuilder
-
-[Summary](#summary)
-
-## IV. Options & Configurations
+## V. Options & Configurations
 
 The program is configured from the **[config.json](config.json)** file in **json** format. In this file, you can set the **character encoding** and the splash screen display.
 
@@ -93,11 +88,11 @@ You can modify it directly (which is not recommended) or use the configuration p
 
 [Summary](#summary)
 
-## V. Contributing
+## VI. Contributing
 
 If you to contribute to the project, you access to the coding guideline at [CONTRIBUTING.md](CONTRIBUTING.md)
 
-## VI. License
+## VII. License
 
 Code licensed under [GPL v3](LICENSE)
 
