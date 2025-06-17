@@ -4,15 +4,17 @@ Un multi-outils disposant de modèle générique permettant de développer des o
 
 ## Sommaire
 
-1. [Aperçu](#aperçu)
-2. [Pré-requis](#pré-requis)
-   - [Dépendances](#dépendances)
-   - [WSL / Docker](#wsl--docker)
-3. [Utilisations](#utilisations)
-   - [Gestion des outils](#gestion-des-outils)
-   - [Gestion WSL avec WSLBuilder](#gestion-des-images-wsl)
-4. [Options & Configurations](#options--configurations)
-6. [Licence](#licence)
+- [**toolsManager.py**](#toolsmanagerpy)
+  - [Sommaire](#sommaire)
+  - [Aperçu](#aperçu)
+  - [Pré-requis](#pré-requis)
+    - [Dépendances](#dépendances)
+    - [WSL / Docker](#wsl--docker)
+  - [Utilisations](#utilisations)
+    - [Gestion des outils](#gestion-des-outils)
+    - [Gestion WSL avec WSLBuilder](#gestion-wsl-avec-wslbuilder)
+  - [Options \& Configurations](#options--configurations)
+  - [Licence](#licence)
 
 ## Aperçu
 
@@ -70,6 +72,7 @@ La configuration du programme se fait depuis le fichier **[config.json](config.j
 
 ```json
 {
+  "colors": false,
   "encoding": "utf-8",
   "splash": true
 }
