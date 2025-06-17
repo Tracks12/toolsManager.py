@@ -18,9 +18,9 @@ try:
 	from core import INFO, REGEX_ARGS
 	from core import helper, launch, sortTools, splash, version
 	from core.colors import Colors
+	from core.config import Config, getConfig, setConfig
 	from core.generate import Generate
 	from core.icons import Icons
-	from core.config import Config, getConfig, setConfig
 
 	# --- Importing the tool registry ---
 	from tools import TOOLS

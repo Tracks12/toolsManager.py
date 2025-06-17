@@ -17,8 +17,7 @@ from os.path import abspath, basename, dirname
 from core.icons import Icons
 from core.config import Config
 
-TOOL_TEMPLATE = '''
-#!/usr/bin/env python3
+TOOL_TEMPLATE = '''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # tools/hello.py

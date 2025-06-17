@@ -1,5 +1,7 @@
 # CONTRIBUTING
 
+[Back to index](README.md)
+
 ## Coding Guidelines – toolsManager.py
 
 This document defines the best development practices to follow when contributing to the project.
@@ -20,7 +22,7 @@ This document defines the best development practices to follow when contributing
 ### 🧱 Tool Writing Convention
 
 - Each tool must:
-	- be in a separate file under tools/,
+	- be in a separate file under `tools/`,
 	- have the same name as the class (in PascalCase),
 	- inherit from core.tool.Tool,
 	- must implement the run() method.
@@ -76,24 +78,17 @@ class Hello:
 
 	# ❌ Missing Tool porperties command, name, path & version
 
-	def __init__(self, args: list[str]):
+	def __init__(self, a: list[str]): # ❌ Naming mistake on args parameters
 		super().__init__()
 
-		self._args	= [
-			(("-s", "--say-hello", "<user>"), "Say hello to the user")
-		] + self._args[:]
+		# ❌ Missing init properties _args & _execs
 
-		self._execs = [
-			lambda x:self.hey(x)
-		] + self._execs[:]
-
-		self._run(args)
+		self.hey(a) # ❌ Missing _run(args) method
 
 	# ❌ Bad name compliance
 	def hey(self, args: list[str]) -> bool:
 		print(f"Goodbye world :(")
 		return(True)
-
 ```
 
 > [!Tip]
@@ -114,7 +109,7 @@ class Hello:
 ## 🔁 GitFlow
 
 - Each new tool or feature must start from a dedicated branch from dev.
-- Branches must be named feature/tool-name or fix/issue.
+- Branches must be named `feature/tool-name` or `hotfix/issue`.
 - Always rebase before merging to dev.
 - The master branch should only receive tested and stable code.
 - Each merge to master must be accompanied by a versioned tag (v1.2.0, etc.).
@@ -131,3 +126,5 @@ class Hello:
 
 - Forks, pull requests, and issues welcome.
 - Please respect the structure and naming, and keep the code readable.
+
+[Back to index](README.md)

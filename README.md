@@ -9,9 +9,13 @@ A multi-tool with a generic template for developing management tools like WSLBui
   - [I. Preview](#i-preview)
   - [II. Prerequisites](#ii-prerequisites)
     - [II.1 Dependencies](#ii1-dependencies)
-    - [II.2 WSL / Docker](#ii2-wsl--docker)
   - [III. Uses](#iii-uses)
-  - [IV Tool Management](#iv-tool-management)
+    - [III.1 Command Prompt](#iii1-command-prompt)
+    - [III.2 Main Program](#iii2-main-program)
+  - [IV. Tool Management](#iv-tool-management)
+    - [IV.1 Tool Structure](#iv1-tool-structure)
+    - [IV.2 Tools Registry](#iv2-tools-registry)
+    - [IV.3 Tools Index](#iv3-tools-index)
   - [V. Options \& Configurations](#v-options--configurations)
   - [VI. Contributing](#vi-contributing)
   - [VII. License](#vii-license)
@@ -24,7 +28,7 @@ A multi-tool with a generic template for developing management tools like WSLBui
 
 ## II. Prerequisites
 
-> [!Warning]
+> [!Important]
 > Installing **[Python 3](https://www.python.org/downloads/)** is recommended to run this script on Windows.
 
 [Summary](#summary)
@@ -48,27 +52,124 @@ A multi-tool with a generic template for developing management tools like WSLBui
 
 [Summary](#summary)
 
-### II.2 WSL / Docker
-
-[Summary](#summary)
-
 ## III. Uses
 
-Command prompt: `$ python main.py <argument>`
+To use the tool manager, you need to open a terminal prompt and run the python script at the root of the project
+
+> [!Important]
+> Some tools present in the registry have dependencies contained in the [`libs/`](libs/) folder in the form of a `*.rar` file, you must unzip them by typing the command `$ python setup.py`
+
+### III.1 Command Prompt
+
+Usage: `$ python main.py <argument>`
 
 | Arguments             | Values ​             ​| Descriptions                                |
 | --------------------- | ------------------- | ------------------------------------------- |
 | `-g`, `--generate`    | -                   | Generate a tool with interactive inputs     |
 | `-l`, `--list`        | -                   | Display the list of Python tools            |
 | `-s`, `--set`         | `<prop>`, `<value>` | Apply new configuration value to a property |
-| `-t <tool>`, `--tool` | `<tool>`            | Launch a tool                               |
+| `-t`, `--tool`        | `<tool>`            | Launch a tool                               |
 | `-h`, `--help`        | -                   | Display the help menu                       |
 | `-D`, `--debug`       | -                   | Run in debugger mode                        |
 | `-v`, `--version`     | -                   | Display the program version                 |
 
 [Summary](#summary)
 
-## IV Tool Management
+### III.2 Main Program
+
+Usage: `$ python main.py`
+
+```
+   _              _    __  __
+  | |            | |  |  \/  |
+  | |_ ___   ___ | | _|_\  / | __ _ _ __   __ _  __ _  ___ _ __
+  | __/ _ \ / _ \| |/ _/|\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '__|
+  | || (_) | (_) | _\ \ |  | | (_| | | | | (_| | (_| |  __/ |
+   \__\___/ \___/|/___/_|  |_|\__,_|_| |_|\__,_|\__, |\___|_|
+     version: 0.1                               |___/
+
+ List of commands:
+
+ (mat)rix
+ (sh)ell
+ (wb)wslbuilder
+
+ (s)ettings
+ (v)ersion
+ (h)elp
+
+ (q)uit
+
+(toolsManager.py)>
+```
+
+[Summary](#summary)
+
+## IV. Tool Management
+
+[Summary](#summary)
+
+### IV.1 Tool Structure
+
+Here you will find a typical example of a tool structure:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# tools/hello.py
+
+# Importation of the tool model
+from core.tool import Tool
+
+class Hello(Tool):
+	""" Say hello to the user
+	"""
+
+	command	= (("hello", "hel"), "(hel)lo") # The launch command control by name or alias
+	name	= "Hello" # Tool name
+	path	= __file__ # Path of tool file
+	version	= "0.1a" # Tool version
+
+	def __init__(self, args: list[str]):
+		# Initialization of Tool
+		super().__init__()
+
+		# Argument registry corresponding to lamdba registry index
+		self._args	= [
+			(("-s", "--say-hello", ""), "Say a hello world")
+		] + self._args[:]
+
+		# Lamdba registry corresponding to argument registry index
+		self._execs = [
+			lambda x:self._sayHello(x)
+		] + self._execs[:]
+
+		# _run(args) method to lauch method in lambda registry with arguments
+		# tips: you can rewrite the methode if you want to put some exception or rules to launch
+		self._run(args)
+
+	def _sayHello(self, args: list[str]) -> bool:
+		print(f"Hello world :D")
+		return(True)
+
+	# ...
+```
+
+> [!Tip]
+> Since the last update, you can create you own tool by typing `$ python main.py -g`
+
+[Summary](#summary)
+
+### IV.2 Tools Registry
+
+[Summary](#summary)
+
+### IV.3 Tools Index
+
+| Tool                             | Version |
+| -------------------------------- | ------- |
+| [WSLBuilder](docs/WSLBuilder.md) | v0.1a   |
 
 [Summary](#summary)
 
@@ -84,13 +185,20 @@ The program is configured from the **[config.json](config.json)** file in **json
 }
 ```
 
-You can modify it directly (which is not recommended) or use the configuration program with **all possible parameter choices in the "Parameters" option in the main menu**.
+You can modify it directly (which is not recommended) or use the configuration program with **all possible parameter choices in the "Settings" option in the main menu**.
+
+> [!Note]
+> You can manage settings with cli command `$ python main.py -s encoding utf-8` inside a shell
+> 
+> Or directly in main config index by typing `settings` & `set encoding utf-8` inside the program
 
 [Summary](#summary)
 
 ## VI. Contributing
 
 If you to contribute to the project, you access to the coding guideline at [CONTRIBUTING.md](CONTRIBUTING.md)
+
+[Summary](#summary)
 
 ## VII. License
 
