@@ -25,7 +25,7 @@ class Tool:
 		and dispatching of corresponding methods.
 
 		Attributes:
-			command (tuple): CLI command pattern (argument string, alias, full command string).
+			command (tuple[tuple[str, str], str]): CLI command pattern (argument string, alias, full command string).
 			name (str): Tool name.
 			path (str): Absolute file path to the tool.
 			version (str): Version string of the tool.

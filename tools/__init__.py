@@ -17,9 +17,9 @@ from tools.matrix import Matrix
 from tools.shell import Shell
 from tools.wslbuilder import WslBuilder
 
-TOOLS: list[Tool] = [
+TOOLS: tuple[Tool] = (
 	Matrix,
 	Shell,
 	WslBuilder,
-]
+)
 """ Tools registry """

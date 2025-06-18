@@ -7,6 +7,9 @@ r""" Docker image management for WSL.
 	Subsystem for Linux (WSL). It facilitates the customization and integration of Docker images
 	into a WSL environment, simplifying application deployment within this environment.
 
+	Note:
+		Don't forget to run `$ python setup.py` to install wslbuilder dependencies, you can ignore the installation if you have a default wsl instance with a running docker daemon
+
 """
 
 from os import listdir, mkdir, remove, rmdir, system as shell

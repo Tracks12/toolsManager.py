@@ -17,7 +17,7 @@ class Icons:
 
 		Attributes:
 			err (str): Error icon `[!]`
-			warn (str): Warning icon `/!\`
+			warn (str): Warning icon `/!\\`
 			info (str): Information icon `(i)`
 			tips (str): Tip icon `(?)`
 			play (str): Play icon `(>)`
