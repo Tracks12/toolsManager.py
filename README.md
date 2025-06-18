@@ -5,20 +5,20 @@ A multi-tool with a generic template for developing management tools like WSLBui
 ## Summary
 
 - [**ToolsManager.py**](#toolsmanagerpy)
-  - [Summary](#summary)
-  - [I. Preview](#i-preview)
-  - [II. Prerequisites](#ii-prerequisites)
-    - [II.1 Dependencies](#ii1-dependencies)
-  - [III. Uses](#iii-uses)
-    - [III.1 Command Prompt](#iii1-command-prompt)
-    - [III.2 Main Program](#iii2-main-program)
-  - [IV. Tool Management](#iv-tool-management)
-    - [IV.1 Tool Structure](#iv1-tool-structure)
-    - [IV.2 Tools Registry](#iv2-tools-registry)
-    - [IV.3 Tools Index](#iv3-tools-index)
-  - [V. Options \& Configurations](#v-options--configurations)
-  - [VI. Contributing](#vi-contributing)
-  - [VII. License](#vii-license)
+	- [Summary](#summary)
+	- [I. Preview](#i-preview)
+	- [II. Prerequisites](#ii-prerequisites)
+		- [II.1 Dependencies](#ii1-dependencies)
+	- [III. Uses](#iii-uses)
+		- [III.1 Command Prompt](#iii1-command-prompt)
+		- [III.2 Main Program](#iii2-main-program)
+	- [IV. Tool Management](#iv-tool-management)
+		- [IV.1 Tool Structure](#iv1-tool-structure)
+		- [IV.2 Tools Registry](#iv2-tools-registry)
+		- [IV.3 Tools Index](#iv3-tools-index)
+	- [V. Options \& Configurations](#v-options--configurations)
+	- [VI. Contributing](#vi-contributing)
+	- [VII. License](#vii-license)
 
 ## I. Preview
 
@@ -169,7 +169,7 @@ class Hello(Tool):
 
 | Tool                             | Version |
 | -------------------------------- | ------- |
-| [WSLBuilder](docs/WSLBuilder.md) | v0.1a   |
+| [WSLBuilder](docs/WSLBuilder.md) | v1.1    |
 
 [Summary](#summary)
 
