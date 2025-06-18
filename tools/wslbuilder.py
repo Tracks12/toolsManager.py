@@ -41,7 +41,7 @@ class WslBuilder(Tool):
 			(("-d", "--delete", "<distro>"), "Remove a wsl distribution image and disk"),
 			(("-D", "--full-delete", "<distro>"), "Remove a wsl distribution image and disk with docker traces"),
 			(("-e", "--export", "<distro>"), "Export a wsl distribution into a tar image"),
-			(("-i", "--install", "<distro>"), "Import a wsl distribution to workspace"),
+			(("-i", "--install", "<distro>"), "Install a wsl distribution to workspace"),
 			(("-I", "--init", ""), "Init a wsl builder instance with docker"),
 			(("-l", "--list", ""), "List all wsl distributions"),
 			(("-S", "--stat", "<distro>"), "Show statistics about a wsl distributions"),
