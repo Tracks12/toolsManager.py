@@ -4,6 +4,7 @@
 try:
 	# --- Importing external dependencies ---
 	from os import system as shell
+	from os.path import basename
 	from platform import system
 	from re import split
 	from sys import argv, version_info
@@ -84,7 +85,7 @@ def arg(cfg: Config) -> bool:
 			__table = list[str]([
 				f"{INFO['name']} by {INFO['author']}",
 				f"Github: {INFO['github']}\n",
-				"Usage: python main.py <argument>\n",
+				f"Usage: python {basename(__file__)} <argument>\n",
 				f"Arguments:{' '*(34-len('Arguments:'))}Descriptions:"
 			])
 
