@@ -1,9 +1,15 @@
-.vscode/
+# Config
+.vscode
 
-__pycache__/
+# Builds
+/build
+/dist
+__pycache__
 *.pyc
 
+# Packages
 /libs/wslbuilder
 /Shell/
+/Translator/
 /WSLBuilder/
 *.vhdx

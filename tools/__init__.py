@@ -15,11 +15,13 @@ from core.tool import Tool
 
 from tools.matrix import Matrix
 from tools.shell import Shell
+from tools.translator import Translator
 from tools.wslbuilder import WslBuilder
 
 TOOLS: tuple[Tool] = (
 	Matrix,
 	Shell,
+	Translator,
 	WslBuilder,
 )
 """ Tools registry """
