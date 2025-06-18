@@ -1,5 +1,7 @@
 # CONTRIBUTING
 
+[Back to index](README.md)
+
 ## Coding Guidelines – toolsManager.py
 
 This document defines the best development practices to follow when contributing to the project.
@@ -20,7 +22,7 @@ This document defines the best development practices to follow when contributing
 ### 🧱 Tool Writing Convention
 
 - Each tool must:
-	- be in a separate file under tools/,
+	- be in a separate file under `tools/`,
 	- have the same name as the class (in PascalCase),
 	- inherit from core.tool.Tool,
 	- must implement the run() method.
@@ -59,21 +61,38 @@ class Hello(Tool):
 
 		self._run(args)
 
-	def _sayHello(user: str) -> bool:
-		print(f"Hello {user} ! :D")
+	def _sayHello(self, args: list[str]) -> bool:
+		print(f"Hello world :D")
 		return(True)
 ```
 
 #### 🚨 Non-compliant example:
 
 ```python
+# ❌ Missing environment & encoding declarations
+
 # tools/hello.py
 
 # ❌ Missing inheritance from Tool
 class Hello:
-    def run(self):
-        ...
+
+	# ❌ Missing Tool porperties command, name, path & version
+
+	def __init__(self, a: list[str]): # ❌ Naming mistake on args parameters
+		super().__init__()
+
+		# ❌ Missing init properties _args & _execs
+
+		self.hey(a) # ❌ Missing _run(args) method
+
+	# ❌ Bad name compliance
+	def hey(self, args: list[str]) -> bool:
+		print(f"Goodbye world :(")
+		return(True)
 ```
+
+> [!Tip]
+> You can create you own tool by typing `$ python main.py -g`
 
 ## 🧪 Tests
 
@@ -90,7 +109,7 @@ class Hello:
 ## 🔁 GitFlow
 
 - Each new tool or feature must start from a dedicated branch from dev.
-- Branches must be named feature/tool-name or fix/issue.
+- Branches must be named `feature/tool-name` or `hotfix/issue`.
 - Always rebase before merging to dev.
 - The master branch should only receive tested and stable code.
 - Each merge to master must be accompanied by a versioned tag (v1.2.0, etc.).
@@ -107,3 +126,5 @@ class Hello:
 
 - Forks, pull requests, and issues welcome.
 - Please respect the structure and naming, and keep the code readable.
+
+[Back to index](README.md)

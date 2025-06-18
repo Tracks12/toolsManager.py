@@ -14,6 +14,8 @@ from os.path import abspath
 from platform import system
 
 ENABLE_COLOR = bool(system() == "Linux")
+""" Color application state constant
+"""
 
 try:
 	with open(abspath("config.json"), "r", encoding="utf-8") as cfgFile:
@@ -24,6 +26,26 @@ except:
 	pass
 
 class Colors:
+
+	""" CLI ASCII colors
+
+		Note:
+			Colors was disabled if the `colors` of `config.json` was in False or system is Windows
+
+		Attributes:
+			bold (str):
+			italic (str):
+			red (str):
+			green (str):
+			yellow (str):
+			blue (str):
+			purple (str):
+			cyan (str):
+			white (str):
+			end (str):
+
+	"""
+
 	if(ENABLE_COLOR):
 		bold	: str	= "\033[1m"
 		italic	: str	= "\033[3m"

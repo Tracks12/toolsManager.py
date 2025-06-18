@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 try:
-	# --- Importation des dépendances internes ---
+	# --- Importing external dependencies ---
 	from os import system as shell
 	from platform import system
 	from re import split
@@ -11,16 +11,18 @@ try:
 	if(version_info.major < 3):
 		raise(RuntimeError)
 
-	if(system() == "Linux"): # Dépendances pour Linux
+	if(system() == "Linux"): # Dependencies for Linux
 		import readline
 
-	# --- Importation des dépendances internes ---
+	# --- Importing internal dependencies ---
 	from core import INFO, REGEX_ARGS
 	from core import helper, launch, sortTools, splash, version
 	from core.colors import Colors
-	from core.icons import Icons
 	from core.config import Config, getConfig, setConfig
+	from core.generate import Generate
+	from core.icons import Icons
 
+	# --- Importing the tool registry ---
 	from tools import TOOLS
 
 except(RuntimeError) as e:
@@ -32,8 +34,19 @@ except(ModuleNotFoundError) as e:
 	exit()
 
 def arg(cfg: Config) -> bool:
+	""" Launch method in argument mode
+
+		Args:
+			cfg (Config): the user config instance
+
+		Returns:
+			bool: True value when exiting, False on exception
+
+	"""
+
 	__args = dict({
 		"prefix": tuple[tuple[tuple[str], str]]((
+			(("-g", "--generate"), ""),
 			(("-l", "--list"), ""),
 			(("-s", "--set"), "<prop> <value>"),
 			(("-t", "--tool"), "<tool>"),
@@ -42,6 +55,7 @@ def arg(cfg: Config) -> bool:
 			(("-v", "--version"), "")
 		)),
 		"desc": tuple[str | tuple[str]]((
+			"Generate a tool with interactive inputs",
 			"List all registered python tools",
 			("Apply new configuration value on property", "prop: colors|encode|splash"),
 			"Start a selected tools by name",
@@ -52,13 +66,16 @@ def arg(cfg: Config) -> bool:
 	})
 
 	try:
-		if(argv[1] in __args["prefix"][0][0]): # -l, --list
+		if(argv[1] in __args["prefix"][0][0]): # -g, --generate
+			Generate()
+
+		elif(argv[1] in __args["prefix"][1][0]): # -l, --list
 			sortTools(TOOLS)
 
-		elif(argv[1] in __args["prefix"][1][0]): # -s, --set
+		elif(argv[1] in __args["prefix"][2][0]): # -s, --set
 			setConfig(cfg, argv[2], argv[3])
 
-		elif(argv[1] in __args["prefix"][2][0]): # -t, --tool
+		elif(argv[1] in __args["prefix"][3][0]): # -t, --tool
 			for tool in TOOLS:
 				if(argv[2] in tool.command[0]):
 					launch(tool, argv[2:len(argv)])
@@ -74,7 +91,7 @@ def arg(cfg: Config) -> bool:
 			for i, arg in enumerate(__args["prefix"]):
 				__left = f"{arg[0][0]}, {arg[0][1]} {arg[1]}"
 				__desc = f"\n{' '*35}* ".join(__args['desc'][i]) if(isinstance(__args['desc'][i], tuple)) else __args['desc'][i]
-				__table.append(f"{__left}{' '*(34-len(__left))}{__desc}{"\n"*(1 if(i in (2, len(__args['desc'])-1)) else 0)}")
+				__table.append(f"{__left}{' '*(34-len(__left))}{__desc}{"\n"*(1 if(i in (len(__args['desc'])-4, len(__args['desc'])-1)) else 0)}")
 
 			print("\n".join([ f" {t}" for t in __table ]))
 
@@ -97,6 +114,16 @@ def arg(cfg: Config) -> bool:
 	return(True)
 
 def config(cfg: Config) -> bool:
+	""" Config function to apply user settings
+
+		Args:
+			cfg (Config): the user config instance
+
+		Returns:
+			bool: True value when exiting
+
+	"""
+
 	__cmds = list[tuple]([
 		(("set", "s"), "(s)et"),
 		(("get", "g"), "(g)et"),
@@ -144,6 +171,16 @@ def config(cfg: Config) -> bool:
 	return(True)
 
 def main(cfg: Config) -> bool:
+	""" Main launch method
+
+		Args:
+			cfg (Config): the user config instance
+
+		Returns:
+			bool: True value when exiting
+
+	"""
+
 	__cmds = list[tuple]([ tool.command for tool in TOOLS ] + [
 		(("settings", "s"), "(s)ettings"),
 		(("version", "v"), "(v)ersion"),
