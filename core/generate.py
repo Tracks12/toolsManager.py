@@ -20,11 +20,11 @@ from core.config import Config
 TOOL_TEMPLATE = '''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# tools/hello.py
+# tools/{filename}.py
 
 from core.tool import Tool
 
-class Hello(Tool):
+class {classname}(Tool):
 	""" Say hello to the user
 	"""
 
@@ -88,7 +88,7 @@ class Generate:
 		__name		= str(input(f" Tool Name [{self.__defaultName}]: ")) or self.__defaultName
 		__argument	= str(input(f" Tool Argument [{__name.lower()}]: ")) or __name.lower()
 		__alias		= str(input(f" Tool Alias [{__name.lower()[0:3]}]: ")) or __name.lower()[0:3]
-		__concat	= f"({__alias}){__argument[3 if(__alias in __argument) else 0:len(__argument)]}"
+		__concat	= f"({__alias}){__argument[len(__alias) if(__alias in __argument) else 0:len(__argument)]}"
 		__template	= self.__createTemplate(__name, __argument, __alias, __concat)
 
 		self.__encoding	= self.__cfg.getEncoding()
@@ -111,6 +111,8 @@ class Generate:
 		"""
 
 		template = TOOL_TEMPLATE
+		template = template.replace("{filename}", name.lower())
+		template = template.replace("{classname}", name.capitalize())
 		template = template.replace("{name}", name)
 		template = template.replace("{argument}", argument)
 		template = template.replace("{alias}", alias)
