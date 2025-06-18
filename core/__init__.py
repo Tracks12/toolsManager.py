@@ -68,9 +68,15 @@ def launch(tool: Tool, args: list[str]) -> bool:
 		return(True)
 
 def sortTools(tools: list[Tool]) -> list[Tool]:
-	table = list[str]([ f" *  Name{' '*(14-len('Name'))}Command{' '*(16-len('Command'))}Path" ])
+	table = list[str]([ f" *  Name{' '*(14-len('Name'))}Version{' '*(9-len('Version'))}Command{' '*(16-len('Command'))}Path" ])
 	for i, tool in enumerate(tools, start=1):
-		table.append(f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. {tool.name}{' '*(14-len(tool.name))}{Colors.cyan}{tool.command[1]}{Colors.end}{' '*(16-len(tool.command[1]))}{Colors.yellow}{tool.path}{Colors.end}")
+		table.append("".join([
+			f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}.",
+			f"{' '*1}{tool.name}",
+			f"{' '*(14-len(tool.name))}{Colors.purple}{tool.version}{Colors.end}"
+			f"{' '*(9-len(tool.version))}{Colors.cyan}{tool.command[1]}{Colors.end}"
+			f"{' '*(16-len(tool.command[1]))}{Colors.yellow}{tool.path}{Colors.end}"
+		]))
 
 	print(f"\n{'\n'.join([f" {t}" for t in table])}", end="\n"*2)
 	return(tools)
