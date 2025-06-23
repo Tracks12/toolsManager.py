@@ -93,7 +93,7 @@ class WslBuilder(Tool):
 			print(f"{Icons.info}Create path workspace for {self.name} tool at {self.__path}")
 
 		except(FileExistsError):
-			print(f"{Icons.info}Using {self.__path} for {self.name} workspace already exist")
+			print(f"{Icons.info}Using {self.__path} for {self.name} workspace")
 
 		except(PermissionError):
 			print(f"{Icons.warn}Permission denied: Unable to create '{self.__path}'.")
@@ -210,11 +210,12 @@ class WslBuilder(Tool):
 			table.append("".join([
 				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}.",
 				f"{' '*1}{Colors.cyan}{distro.replace('-', ':')}{Colors.end}",
-				f"{' '*(18-len(distro))}{Colors.red if(size == "INACTIVE") else Colors.purple}{size}{Colors.end}",
+				f"{' '*(18-len(distro))}{Colors.red if(size == 'INACTIVE') else Colors.purple}{size}{Colors.end}",
 				f"{' '*(12-len(size))}{Colors.yellow}{abspath(f'{self.__path}/{distro}')}{Colors.end}"
 			]))
 
-		print(f"\n{'\n'.join([ f" {t}" for t in table ])}")
+		_ = "\n".join([ f' {t}' for t in table ])
+		print(f"\n{_}")
 
 	def _stat(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
@@ -241,7 +242,8 @@ class WslBuilder(Tool):
 			else:
 				table[0] += f" [ {Colors.red}INACTIVE{Colors.end} ]"
 
-			print(f"\n{'\n'.join([ f"  {t}" for t in table ])}")
+			_ = "\n".join([ f' {t}' for t in table ])
+			print(f"\n{_}")
 
 	def _start(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])

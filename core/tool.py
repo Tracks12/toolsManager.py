@@ -115,7 +115,10 @@ class Tool:
 
 		for i, a in enumerate(self._args):
 			l = f"{a[0][0]}, {a[0][1]} {a[0][2]}"
-			table.append(f"{l}{' '*(34-len(l))}{a[1]}{"\n"*(1 if(i in jumps) else 0)}")
+			table.append("".join([
+				f"{l}{' '*(34-len(l))}{a[1]}",
+				'\n'*(1 if(i in jumps) else 0)
+			]))
 
 		print("\n".join([ f" {t}" for t in table ]))
 
