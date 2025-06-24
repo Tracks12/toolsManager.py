@@ -49,9 +49,7 @@ def helper(commands: tuple) -> None:
 		c	= int(2 if(i in range((len(commands)-1), (len(commands)))) else c)
 		sep	= str('\n' if(i in (len(commands)-5, len(commands)-2)) else '')
 
-		command = str(f"{colors[c]}{command[1]}{Colors.end}{sep}")
-
-		screen.append(command)
+		screen.append(f"{colors[c]}{command[1]}{Colors.end}{sep}")
 
 	print(("\n").join([ f" {s}" for s in screen ]), end="\n\n")
 
@@ -78,7 +76,8 @@ def sortTools(tools: list[Tool]) -> list[Tool]:
 			f"{' '*(16-len(tool.command[1]))}{Colors.yellow}{tool.path}{Colors.end}"
 		]))
 
-	print(f"\n{'\n'.join([f" {t}" for t in table])}", end="\n"*2)
+	_ = "\n".join([ f" {t}" for t in table ])
+	print(f"\n{_}", end="\n"*2)
 	return(tools)
 
 def splash(spacing: int = 2) -> None:

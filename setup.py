@@ -14,6 +14,9 @@ LIBS_REGISTRY = list[str]([
 
 EXTRACT_PATH = abspath("libs/")
 
+def ask(msg: str = "Are you sure ?") -> bool:
+	return(bool((input(f"{msg} [y/N] ").lower() or "n") == "y"))
+
 def clearLibs(paths: list[str]) -> None:
 	for p in paths:
 		try:
@@ -31,9 +34,7 @@ def install(registry: list[str]) -> bool:
 		for ce in __checkExists:
 			print(f" (-) {ce}")
 
-		__askDeletion = bool((input("Did you want to purge these packages ? [y/N] ").lower() or "n") == "y")
-
-		if(not __askDeletion):
+		if(not ask("Did you want to uninstall these packages ?")):
 			print("[ CANCEL ]: Abort reinstallation !")
 			return(False)
 
@@ -68,27 +69,29 @@ def uninstall(registry: list[str]) -> bool:
 		for ce in __checkExists:
 			print(f" (-) {ce}")
 
-		__askDeletion = bool((input("Did you want to purge these packages ? [y/N] ").lower() or "n") == "y")
-
-		if(not __askDeletion):
+		if(not ask("Did you want to uninstall these packages ?")):
 			print("[ CANCEL ]: Abort uninstallation !")
 			return(False)
 
 		print("[ INFO ]: Uninstallation finished !")
 		clearLibs(__libsPath)
 
+	return(True)
+
 def arg() -> bool:
 	__args = dict({
 		"prefix": tuple[tuple[tuple[str], str]]((
-			(("-i", "--install"), ""),
-			(("-u", "--uninstall"), ""),
+			(("-i", "--install"), "<lib>"),
+			(("-p", "--purge"), ""),
 			(("-r", "--registry"), ""),
+			(("-u", "--uninstall"), "<lib>"),
 			(("-h", "--help"), "")
 		)),
 		"desc": tuple[str | tuple[str]]((
 			"Install a dependency",
-			"Uninstall a dependency",
+			"Purge all dependencies",
 			"Show libs registry",
+			"Uninstall a dependency",
 			"Show the helper commands menu"
 		))
 	})
@@ -96,14 +99,17 @@ def arg() -> bool:
 	try:
 		if(argv[1] in __args["prefix"][0][0]): # -i, --install
 			install([ argv[2] ])
-		
-		elif(argv[1] in __args["prefix"][1][0]): # -u, --uninstall
-			uninstall([ argv[2] ])
+
+		elif(argv[1] in __args["prefix"][1][0]): # -p, --purge
+			uninstall(LIBS_REGISTRY)
 
 		elif(argv[1] in __args["prefix"][2][0]): # -r, --registry
 			print("[ INFO ]: Listing the package registry:")
 			for i, lib in enumerate(LIBS_REGISTRY, 1):
-				print(f" {' '*(3-len(str(i)))}{i}. {lib} -> {abspath(f"{EXTRACT_PATH}/{lib}.rar")}")
+				print(f" {' '*(3-len(str(i)))}{i}. {lib} -> {abspath(f'{EXTRACT_PATH}/{lib}.rar')}")
+		
+		elif(argv[1] in __args["prefix"][3][0]): # -u, --uninstall
+			uninstall([ argv[2] ])
 
 		elif(argv[1] in __args["prefix"][-1][0]): # -h, --help
 			__table = list[str]([
@@ -114,7 +120,10 @@ def arg() -> bool:
 			for i, arg in enumerate(__args["prefix"]):
 				__left = f"{arg[0][0]}, {arg[0][1]} {arg[1]}"
 				__desc = f"\n{' '*35}* ".join(__args['desc'][i]) if(isinstance(__args['desc'][i], tuple)) else __args['desc'][i]
-				__table.append(f"{__left}{' '*(34-len(__left))}{__desc}{"\n"*(1 if(i in (len(__args['desc'])-2, len(__args['desc'])-1)) else 0)}")
+				__table.append("".join([
+					f"{__left}{' '*(34-len(__left))}{__desc}",
+					"\n"*(1 if(i in (len(__args['desc'])-2, len(__args['desc'])-1)) else 0)
+				]))
 
 			print("\n".join([ f" {t}" for t in __table ]))
 
