@@ -6,8 +6,6 @@
 
 This document defines the best development practices to follow when contributing to the project.
 
----
-
 ### 📁 Project Structure
 
 - `main.py`: Main entry point.
@@ -16,8 +14,6 @@ This document defines the best development practices to follow when contributing
 - `tools/`: Contains each tool, 1 `.py` file per tool.
 - `dev`: Continuous development branch.
 - `master`: Stable branch only.
-
----
 
 ### 🧱 Tool Writing Convention
 

@@ -4,6 +4,7 @@
 try:
 	# --- Importing external dependencies ---
 	from os import system as shell
+	from os.path import basename
 	from platform import system
 	from re import split
 	from sys import argv, version_info
@@ -84,14 +85,17 @@ def arg(cfg: Config) -> bool:
 			__table = list[str]([
 				f"{INFO['name']} by {INFO['author']}",
 				f"Github: {INFO['github']}\n",
-				"Usage: python main.py <argument>\n",
+				f"Usage: python {basename(__file__)} <argument>\n",
 				f"Arguments:{' '*(34-len('Arguments:'))}Descriptions:"
 			])
 
 			for i, arg in enumerate(__args["prefix"]):
 				__left = f"{arg[0][0]}, {arg[0][1]} {arg[1]}"
 				__desc = f"\n{' '*35}* ".join(__args['desc'][i]) if(isinstance(__args['desc'][i], tuple)) else __args['desc'][i]
-				__table.append(f"{__left}{' '*(34-len(__left))}{__desc}{"\n"*(1 if(i in (len(__args['desc'])-4, len(__args['desc'])-1)) else 0)}")
+				__table.append("".join([
+					f"{__left}{' '*(34-len(__left))}{__desc}",
+					"\n"*(1 if(i in (len(__args['desc'])-4, len(__args['desc'])-1)) else 0)
+				]))
 
 			print("\n".join([ f" {t}" for t in __table ]))
 

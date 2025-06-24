@@ -12,11 +12,12 @@ r""" Docker image management for WSL.
 
 """
 
+# tools/wslbuilder.py
+
 from os import listdir, mkdir, remove, rmdir, system as shell
 from os.path import abspath, dirname, getsize, isdir
 
 import re
-from token import EXACT_TOKEN_TYPES
 
 from core import stringSize
 from core.colors import Colors
@@ -29,7 +30,7 @@ class WslBuilder(Tool):
 	command	= (("wslbuilder", "wb"), "(wb)wslbuilder")
 	name	= "WSLBuilder"
 	path	= __file__
-	version	= "1.0"
+	version	= "1.1"
 
 	def __init__(self, args: list[str]):
 		super().__init__()
@@ -42,6 +43,7 @@ class WslBuilder(Tool):
 			(("-d", "--delete", "<distro>"), "Remove a wsl distribution image and disk"),
 			(("-D", "--full-delete", "<distro>"), "Remove a wsl distribution image and disk with docker traces"),
 			(("-e", "--export", "<distro>"), "Export a wsl distribution into a tar image"),
+			(("-i", "--install", "<distro>"), "Install a wsl distribution to workspace"),
 			(("-I", "--init", ""), "Init a wsl builder instance with docker"),
 			(("-l", "--list", ""), "List all wsl distributions"),
 			(("-S", "--stat", "<distro>"), "Show statistics about a wsl distributions"),
@@ -53,6 +55,7 @@ class WslBuilder(Tool):
 			lambda x:self._delete(x),
 			lambda x:self._fullDelete(x),
 			lambda x:self._export(x),
+			lambda x:self._install(x),
 			lambda x:self._init(),
 			lambda x:self._list(),
 			lambda x:self._stat(x),
@@ -60,6 +63,19 @@ class WslBuilder(Tool):
 		] + self._execs[:]
 
 		self._run(args)
+
+	def __ask(self, msg: str = "Are you sure ?") -> bool:
+		return(bool(input(f"{msg} [y/N] ").lower() in ("y", "yes")))
+
+	def __checkActiveDistro(self, distroname: str) -> bool:
+		__distroPath = abspath(f"{self.__path}/{distroname}")
+		__distroRepo = listdir(__distroPath)
+
+		if("ext4.vhdx" in __distroRepo):
+			return(True)
+
+		print(f"{Icons.warn}Wsl distribution is inactive")
+		return(False)
 
 	def __checkDockerStatus(self) -> bool:
 		return(bool(shell(f"wsl service docker status")))
@@ -79,7 +95,7 @@ class WslBuilder(Tool):
 			print(f"{Icons.info}Create path workspace for {self.name} tool at {self.__path}")
 
 		except(FileExistsError):
-			print(f"{Icons.info}Using {self.__path} for {self.name} workspace already exist")
+			print(f"{Icons.info}Using {self.__path} for {self.name} workspace")
 
 		except(PermissionError):
 			print(f"{Icons.warn}Permission denied: Unable to create '{self.__path}'.")
@@ -104,7 +120,8 @@ class WslBuilder(Tool):
 			shell(f"wsl docker export {__distroName} > {__distroPath}/{__distroName}.tar")
 			shell(f"wsl --import {__distroName} {__distroPath} {__distroPath}/{__distroName}.tar")
 
-			self._start(args)
+			if(self.__ask("Did you want to start it ?")):
+				self._start(args)
 
 		except(FileExistsError):
 			print(f"{Icons.warn}Wsl distribution already exist on workspace")
@@ -118,24 +135,47 @@ class WslBuilder(Tool):
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
 		if(self.__checkExistDistro(__distroName)):
-			shell(f"wsl --unregister {__distroName}")
-			remove(f"{__distroPath}/{__distroName}.tar")
-			rmdir(f"{__distroPath}")
+			if(("-f" in args) or self.__ask(f"Confirm the deletion of {args[0]} ?")):
+				shell(f"wsl --unregister {__distroName}")
+				remove(f"{__distroPath}/{__distroName}.tar")
+				rmdir(f"{__distroPath}")
 
 	def _fullDelete(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
-		shell(f"wsl docker rm {__distroName}")
-		shell(f"wsl docker rmi {args[0]}")
+		if(self.__ask(f"Confirm the deletion of {args[0]} ?")):
+			shell(f"wsl docker rm {__distroName}")
+			shell(f"wsl docker rmi {args[0]}")
 
-		self._delete(args)
+			self._delete(args[:] + ["-f"])
 
 	def _export(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
-		if(self.__checkExistDistro(__distroName)):
+		if(
+			self.__checkExistDistro(__distroName)
+			and self.__checkActiveDistro(__distroName)
+		):
 			shell(f"wsl --export {__distroName} {__distroPath}/{__distroName}.tar")
+
+	def _install(self, args: list[str]) -> None:
+		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
+		__distroPath = abspath(f"{self.__path}/{__distroName}")
+
+		try:
+			if(not isdir(__distroPath)):
+				raise(FileNotFoundError)
+
+			if(not self.__checkActiveDistro(__distroName)):
+				shell(f"wsl --import {__distroName} {__distroPath} {abspath(f'{__distroPath}/{__distroName}.tar')}")
+
+			if(self.__ask("Did you want to start it ?")):
+				self._start(args)
+
+		except(FileNotFoundError):
+			print(f"{Icons.err}{__distroName} isn't found in {self.__path}")
+			print(f"{Icons.tips}Make sure you have {__distroName} in {self.__path} with {__distroName}.tar inside")
 
 	def _init(self) -> None:
 		__libspath = abspath(f"{self.__path}/../libs/wslbuilder")
@@ -163,34 +203,55 @@ class WslBuilder(Tool):
 
 		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Size{' '*(12-len('Size'))}Path" ])
 		for i, distro in enumerate(__distros, start=1):
-			size = stringSize(getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")))
-			table.append(f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. {Colors.cyan}{distro.replace('-', ':')}{Colors.end}{' '*(18-len(distro))}{size}{' '*(12-len(size))}{Colors.yellow}{abspath(f'{self.__path}/{distro}')}{Colors.end}")
+			try:
+				size = stringSize(getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")))
 
-		print(f"\n{'\n'.join([ f" {t}" for t in table ])}")
+			except(FileNotFoundError):
+				size = f"INACTIVE"
+
+			table.append("".join([
+				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}.",
+				f"{' '*1}{Colors.cyan}{distro.replace('-', ':')}{Colors.end}",
+				f"{' '*(18-len(distro))}{Colors.red if(size == 'INACTIVE') else Colors.purple}{size}{Colors.end}",
+				f"{' '*(12-len(size))}{Colors.yellow}{abspath(f'{self.__path}/{distro}')}{Colors.end}"
+			]))
+
+		_ = "\n".join([ f' {t}' for t in table ])
+		print(f"\n{_}")
 
 	def _stat(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
 		if(self.__checkExistDistro(__distroName)):
 			__distroPath		= abspath(f"{self.__path}/{__distroName}")
-			__distroDiskName	= str("ext4.vhdx")
 			__distroImageName	= str(f"{__distroName}.tar")
-			__distroDiskPath	= abspath(f"{__distroPath}/{__distroDiskName}")
 			__distroImagePath	= abspath(f"{__distroPath}/{__distroImageName}")
-			__distroDiskSize	= stringSize(getsize(__distroDiskPath))
 			__distroImageSize	= stringSize(getsize(__distroImagePath))
 
 			table = list[str]([
-				f"* Name{' '*(8-len('Name'))}: {args[0]}",
-				f"* Path{' '*(8-len('Path'))}: {__distroPath}\n",
-				f"* Disk{' '*(8-len('Disk'))}: [{__distroDiskSize}] {__distroDiskName}",
-				f"* Image{' '*(8-len('Image'))}: [{__distroImageSize}] {__distroImageName}"
+				f"* Name{' '*(8-len('Name'))}: {Colors.cyan}{args[0]}{Colors.end}",
+				f"* Path{' '*(8-len('Path'))}: {Colors.yellow}{__distroPath}{Colors.end}",
+				f"* Image{' '*(8-len('Image'))}: [ {Colors.purple}{__distroImageSize}{Colors.end} ] {__distroImageName}"
 			])
 
-			print(f"\n{'\n'.join([ f"  {t}" for t in table ])}")
+			if(self.__checkActiveDistro(__distroName)):
+				__distroDiskName	= str("ext4.vhdx")
+				__distroDiskPath	= abspath(f"{__distroPath}/{__distroDiskName}")
+				__distroDiskSize	= stringSize(getsize(__distroDiskPath))
+
+				table.append(f"* Disk{' '*(8-len('Disk'))}: [ {Colors.purple}{__distroDiskSize}{Colors.end} ] {__distroDiskName}")
+
+			else:
+				table[0] += f" [ {Colors.red}INACTIVE{Colors.end} ]"
+
+			_ = "\n".join([ f' {t}' for t in table ])
+			print(f"\n{_}")
 
 	def _start(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
-		if(self.__checkExistDistro(__distroName)):
+		if(
+			self.__checkExistDistro(__distroName)
+			and self.__checkActiveDistro(__distroName)
+		):
 			shell(f"wsl -d {__distroName}")

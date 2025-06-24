@@ -5,20 +5,20 @@ A multi-tool with a generic template for developing management tools like WSLBui
 ## Summary
 
 - [**ToolsManager.py**](#toolsmanagerpy)
-  - [Summary](#summary)
-  - [I. Preview](#i-preview)
-  - [II. Prerequisites](#ii-prerequisites)
-    - [II.1 Dependencies](#ii1-dependencies)
-  - [III. Uses](#iii-uses)
-    - [III.1 Command Prompt](#iii1-command-prompt)
-    - [III.2 Main Program](#iii2-main-program)
-  - [IV. Tool Management](#iv-tool-management)
-    - [IV.1 Tool Structure](#iv1-tool-structure)
-    - [IV.2 Tools Registry](#iv2-tools-registry)
-    - [IV.3 Tools Index](#iv3-tools-index)
-  - [V. Options \& Configurations](#v-options--configurations)
-  - [VI. Contributing](#vi-contributing)
-  - [VII. License](#vii-license)
+	- [Summary](#summary)
+	- [I. Preview](#i-preview)
+	- [II. Prerequisites](#ii-prerequisites)
+		- [II.1 Dependencies](#ii1-dependencies)
+	- [III. Uses](#iii-uses)
+		- [III.1 Command Prompt](#iii1-command-prompt)
+		- [III.2 Main Program](#iii2-main-program)
+	- [IV. Tool Management](#iv-tool-management)
+		- [IV.1 Tool Structure](#iv1-tool-structure)
+		- [IV.2 Tools Registry](#iv2-tools-registry)
+		- [IV.3 Tools Index](#iv3-tools-index)
+	- [V. Options \& Configurations](#v-options--configurations)
+	- [VI. Contributing](#vi-contributing)
+	- [VII. License](#vii-license)
 
 ## I. Preview
 
@@ -58,6 +58,8 @@ To use the tool manager, you need to open a terminal prompt and run the python s
 
 > [!Important]
 > Some tools present in the registry have dependencies contained in the [`libs/`](libs/) folder in the form of a `*.rar` file, you must unzip them by typing the command `$ python setup.py`
+
+[Summary](#summary)
 
 ### III.1 Command Prompt
 
@@ -167,9 +169,11 @@ class Hello(Tool):
 
 ### IV.3 Tools Index
 
-| Tool                             | Version |
-| -------------------------------- | ------- |
-| [WSLBuilder](docs/WSLBuilder.md) | v0.1a   |
+| Tool                             | Version | Description                                |
+| -------------------------------- | ------- | ------------------------------------------ |
+| [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
+| [Translator](docs/Translator.md) | v1.0    | Translation tool manager                   |
+| [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
 
 [Summary](#summary)
 
