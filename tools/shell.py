@@ -30,15 +30,15 @@ class Shell(Tool):
 		self.__setup()
 
 		self._args = [
-			(("-c", "--command", ""), "Run a bash command"),
-			(("-d", "--delete-schedule", ""), "Delete a schedule of commands"),
+			(("-c", "--command", "<command>"), "Run a bash command"),
+			(("-d", "--delete-schedule", "<schedule>"), "Delete a schedule of commands"),
 			(("-l", "--list-schedule", ""), "List all schedules save in workspace"),
-			(("-n", "--new-schedule", ""), "Create a schedule of commands"),
-			(("-r", "--run-schedule", ""), "Run a schedule of commands")
+			(("-n", "--new-schedule", "<schedule>"), "Create a schedule of commands"),
+			(("-r", "--run-schedule", "<schedule>"), "Run a schedule of commands")
 		] + self._args[:]
 
 		self._execs = [
-			lambda x:self._exec(x),
+			lambda x:self._command(x),
 			lambda x:self._deleteSchedule(x),
 			lambda x:self._listSchedule(),
 			lambda x:self._newSchedule(x),
@@ -81,7 +81,7 @@ class Shell(Tool):
 					self._execs[i](args[2: len(args)])
 					return(True)
 
-			self._exec(args[1: len(args)])
+			self._command(args[1: len(args)])
 
 		except(IndexError):
 			print(' To see more of command type "-h" or "--help" on arguments')
@@ -94,7 +94,7 @@ class Shell(Tool):
 
 		return(False)
 
-	def _exec(self, args: list[str]) -> None:
+	def _command(self, args: list[str]) -> None:
 		shell(" ".join(args))
 
 	def _deleteSchedule(self, args: list[str]) -> None:
@@ -162,7 +162,7 @@ class Shell(Tool):
 			if(len(__schedules)):
 				for i, schedule in enumerate(__schedules):
 					print(f" [{i}]: {schedule}")
-					self._exec([ schedule ])
+					self._command([ schedule ])
 
 					if(("-p" in args) and (i+1 < len(__schedules))):
 						input(f'Next command: "$ {__schedules[i+1]}"')

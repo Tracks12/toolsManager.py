@@ -167,9 +167,10 @@ class Hello(Tool):
 
 ### IV.3 Tools Index
 
-| Tool                             | Version |
-| -------------------------------- | ------- |
-| [WSLBuilder](docs/WSLBuilder.md) | v1.1    |
+| Tool                             | Version | Description                                |
+| -------------------------------- | ------- | ------------------------------------------ |
+| [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
+| [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
 
 [Summary](#summary)
 
