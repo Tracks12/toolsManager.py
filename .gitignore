@@ -4,5 +4,6 @@ __pycache__/
 *.pyc
 
 /libs/wslbuilder
+/Shell/
 /WSLBuilder/
 *.vhdx
