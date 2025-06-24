@@ -111,7 +111,7 @@ class Translator(Tool):
 		__datas			= list[str]([])
 		__regions		= dict({})
 
-		with open(f"{__projectPath}/{args[0]}.csv", 'r', newline='') as file:
+		with open(f"{__projectPath}/{args[0]}.csv", 'r', encoding=self.__cfg.getEncoding(), newline='') as file:
 			print(f"{Icons.play}Reading CSV file and load translation ...")
 			lines = DictReader(file, delimiter=',')
 
@@ -137,13 +137,13 @@ class Translator(Tool):
 
 		print(f"{Icons.play}Writing new regions json files ...")
 
-		for key in __regions:
+		for key in set(__regions):
 			__regionPath = abspath(f"{__projectPath}/{key}.json")
 
 			try:
 				print(f'{Icons.play}WRITTING "{__regionPath}" [ {Colors.yellow}...{Colors.end} ]', end="\r")
 
-				with open(__regionPath, 'w') as regionFile:
+				with open(__regionPath, 'w', encoding=self.__cfg.getEncoding()) as regionFile:
 					string = str(dumps(__regions[key], indent=2, sort_keys=True))
 					regionFile.write(string)
 
