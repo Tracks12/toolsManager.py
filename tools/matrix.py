@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# tools/matrix.py
+
 from os import system as shell
 from random import randrange
 from time import sleep

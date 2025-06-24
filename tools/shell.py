@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# tools/shell.py
+
 from json import dump, load
 from os import listdir, mkdir, remove, system as shell
 from os.path import abspath, dirname
@@ -119,10 +121,10 @@ class Shell(Tool):
 		print(f"\n{_}")
 
 	def _newSchedule(self, args: list[str]) -> None:
-		__scheduleName = re.sub(SCHEDULENAME_REGEX, "-", args[0])
-		__schedules = list[str]([])
-
 		try:
+			__scheduleName = re.sub(SCHEDULENAME_REGEX, "-", args[0])
+			__schedules = list[str]([])
+
 			if(self.__checkExistSchedule(__scheduleName)):
 				raise(FileExistsError(f'Schedule "{args[0]}" already exist in {self.__schedulesPath}'))
 
