@@ -172,7 +172,7 @@ class Hello(Tool):
 | Tool                             | Version | Description                                |
 | -------------------------------- | ------- | ------------------------------------------ |
 | [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
-| [Translator](docs/Translator.md) | v0.1a   | Translation tool manager                   |
+| [Translator](docs/Translator.md) | v1.0    | Translation tool manager                   |
 | [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
 
 [Summary](#summary)
