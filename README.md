@@ -59,6 +59,8 @@ To use the tool manager, you need to open a terminal prompt and run the python s
 > [!Important]
 > Some tools present in the registry have dependencies contained in the [`libs/`](libs/) folder in the form of a `*.rar` file, you must unzip them by typing the command `$ python setup.py`
 
+[Summary](#summary)
+
 ### III.1 Command Prompt
 
 Usage: `$ python main.py <argument>`
@@ -170,6 +172,7 @@ class Hello(Tool):
 | Tool                             | Version | Description                                |
 | -------------------------------- | ------- | ------------------------------------------ |
 | [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
+| [Translator](docs/Translator.md) | v0.1a   | Translation tool manager                   |
 | [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
 
 [Summary](#summary)
