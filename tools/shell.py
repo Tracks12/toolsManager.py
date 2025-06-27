@@ -24,20 +24,18 @@ class Shell(Tool):
 	version	= "1.0"
 
 	def __init__(self, args: list[str]):
-		super().__init__()
-
 		self.__cfg	= Config()
 		self.__path	= str(abspath(f"{dirname(abspath(__file__))}/../{self.name}"))
 		self.__schedulesPath = abspath(f"{self.__path}/Schedules")
 		self.__setup()
 
 		self._args = [
-			(("-c", "--command", "<command>"), "Run a bash command"),
-			(("-d", "--delete-schedule", "<schedule>"), "Delete a schedule of commands"),
+			(("-c", "--command", "<cmd>"), "Run a bash command"),
+			(("-d", "--delete-schedule", "<sch> <opt>"), ("Delete a schedule of commands", "opt: -f to delete without asking")),
 			(("-l", "--list-schedule", ""), "List all schedules save in workspace"),
-			(("-n", "--new-schedule", "<schedule>"), "Create a schedule of commands"),
-			(("-r", "--run-schedule", "<schedule>"), "Run a schedule of commands")
-		] + self._args[:]
+			(("-n", "--new-schedule", "<sch>"), "Create a schedule of commands"),
+			(("-r", "--run-schedule", "<sch> <opt>"), ("Run a schedule of commands", "opt: -p to pause between all commands"))
+		]
 
 		self._execs = [
 			lambda x:self._command(x),
@@ -45,12 +43,10 @@ class Shell(Tool):
 			lambda x:self._listSchedule(),
 			lambda x:self._newSchedule(x),
 			lambda x:self._runSchedule(x),
-		] + self._execs[:]
+		]
 
+		super().__init__()
 		self._run(args)
-
-	def __ask(self, msg: str = "Are you sure ?") -> bool:
-		return(bool(input(f"{msg} [y/N] ").lower() in ("y", "yes")))
 
 	def __checkExistSchedule(self, scheduleName: str) -> bool:
 		__schedules = [ s.split(".")[0] for s in listdir(self.__schedulesPath) ]
@@ -100,11 +96,18 @@ class Shell(Tool):
 		shell(" ".join(args))
 
 	def _deleteSchedule(self, args: list[str]) -> None:
-		__scheduleName = re.sub(SCHEDULENAME_REGEX, "-", args[0])
+		try:
+			__scheduleName = re.sub(SCHEDULENAME_REGEX, "-", args[0])
 
-		if(self.__checkExistSchedule(__scheduleName)):
-			print(f'{Icons.info}Delete "{__scheduleName}"')
-			remove(abspath(f"{self.__schedulesPath}/{__scheduleName}.json"))
+			if(not self.__checkExistSchedule(__scheduleName)):
+				raise(FileNotFoundError("Schedule doesn't exist on workspace"))
+
+			if(("-f" in args) or self.ask(f"Confirm the deletion of {args[0]} ?")):
+				remove(abspath(f"{self.__schedulesPath}/{__scheduleName}.json"))
+				print(f'{Icons.info}"{__scheduleName}" was deleted from {self.__path}')
+
+		except(FileNotFoundError) as e:
+			print(f"{Icons.warn}{e}")
 
 	def _listSchedule(self) -> None:
 		__schedules = listdir(self.__schedulesPath)

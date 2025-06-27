@@ -45,16 +45,15 @@ class Hello(Tool):
 	version	= "0.1a"
 
 	def __init__(self, args: list[str]):
-		super().__init__()
-
 		self._args	= [
 			(("-s", "--say-hello", "<user>"), "Say hello to the user")
-		] + self._args[:]
+		]
 
 		self._execs = [
 			lambda x:self._sayHello(x)
-		] + self._execs[:]
+		]
 
+		super().__init__()
 		self._run(args)
 
 	def _sayHello(self, args: list[str]) -> bool:
@@ -75,7 +74,7 @@ class Hello:
 	# ❌ Missing Tool porperties command, name, path & version
 
 	def __init__(self, a: list[str]): # ❌ Naming mistake on args parameters
-		super().__init__()
+		super().__init__() # ❌ Bad super init position
 
 		# ❌ Missing init properties _args & _execs
 
@@ -106,6 +105,11 @@ class Hello:
 
 - Each new tool or feature must start from a dedicated branch from dev.
 - Branches must be named `feature/tool-name` or `hotfix/issue`.
+- Commit must be named like these:
+  - `doc(scope): ...` for documentation updates
+  - `feat(scope): ...` for feature developed
+  - `fix(scope): ...` for fix applied
+  - `refacto(scope): ...` for refactoring or code optimization
 - Always rebase before merging to dev.
 - The master branch should only receive tested and stable code.
 - Each merge to master must be accompanied by a versioned tag (v1.2.0, etc.).

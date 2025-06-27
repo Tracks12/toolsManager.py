@@ -14,6 +14,7 @@ r""" Base module for all CLI tools in the application.
 
 from traceback import format_exc
 
+from core.exceptions import ToolInitError
 from core.icons import Icons
 
 class Tool:
@@ -41,21 +42,52 @@ class Tool:
 
 	"""
 
-	command	: tuple[tuple[str, str], str]	= (("", ""), "")
-	name	: str							= ""
-	path	: str							= ""
-	version	: str							= ""
-
-	_args	: list[tuple[tuple[str, str, str], str]]	= [
-		(("-h", "--help", ""), "Show the helper commands menu"),
-		(("-v", "--version", ""), "Show version of tool")
-	]
+	command	: tuple[tuple[str], str]	= (("", ""), "")
+	name	: str						= ""
+	path	: str						= ""
+	version	: str						= ""
 
 	def __init__(self):
-		self._execs = [
-			lambda x:self._helper(),
-			lambda x:self._version()
+		self._args	= self._args[:] + [
+			(("-h", "--help", ""), "Show the helper commands menu"),
+			(("-v", "--version", ""), "Show version of tool")
 		]
+
+		self._execs	= self._execs[:] + [
+			lambda _:self._helper(),
+			lambda _:self._version()
+		]
+
+		self.__validate()
+
+	def __validate(self) -> None:
+		try:
+			if(
+				not isinstance(self._args, list)
+				or not isinstance(self._execs, list)
+			):
+				raise(ToolInitError(self.name, "Both `_args` and `_execs` must be lists."))
+
+			if(len(self._args) != len(self._execs)):
+				raise(ToolInitError(self.name, "`_args` and `_execs` must be of the same length."))
+
+			for i, fn in enumerate(self._execs):
+				if(not callable(fn)):
+					raise(ToolInitError(self.name, f"Item at index {i} in `_execs` is not callable."))
+
+			if(
+				not self.name
+				or not self.command
+				or not self.path
+				or not self.version
+			):
+				raise(ToolInitError(self.name, "Tool metadata (name, command, path, version) is incomplete."))
+
+		except(ToolInitError):
+			raise
+
+		except Exception as e:
+			raise(ToolInitError(self.name, f"Unexpected error during tool initialization: {e}"))
 
 	def _run(self, args: list[str]) -> bool:
 		""" Main argument parser and dispatcher.
@@ -116,7 +148,7 @@ class Tool:
 		for i, a in enumerate(self._args):
 			l = f"{a[0][0]}, {a[0][1]} {a[0][2]}"
 			table.append("".join([
-				f"{l}{' '*(34-len(l))}{a[1]}",
+				"".join((f"{l}{' '*(34-len(l))}", f"\n{' '*35}* ".join(a[1]) if(isinstance(a[1], tuple)) else a[1])),
 				'\n'*(1 if(i in jumps) else 0)
 			]))
 
@@ -130,3 +162,17 @@ class Tool:
 		"""
 
 		print(f" {self.name} {self.version}")
+
+	def ask(self, msg: str = "Are you sure ?") -> bool:
+		""" Ask a CLI question to confirm a choice.
+
+			Args:
+				msg (str, optional): The text to display on question.
+					Defaults to "Are you sure ?".
+
+			Returns:
+				bool: True if it's "yes" or "y", False otherwise.
+
+		"""
+
+		return(bool(input(f"{msg} [y/N] ").lower() in ("y", "yes")))
