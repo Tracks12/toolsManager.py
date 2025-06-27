@@ -4,7 +4,7 @@
 # tools/translator.py
 
 from csv import DictReader, DictWriter
-from json import dumps
+from json import dumps, load
 from os import listdir, mkdir
 from os.path import abspath, dirname
 from requests import get
@@ -93,7 +93,7 @@ class Translator(Tool):
 			for i, arg in enumerate(args):
 				if(arg in ("-r", "--remote")):
 					__url = f"{args[i+1]}/export?format=csv"
-					print(f"{Icons.play}Downloading from remote [ ... ]", end="\r")
+					print(f"{Icons.play}Downloading from remote [ {Colors.yellow}...{Colors.end} ]", end="\r")
 					__req = get(__url)
 					print(f"{Icons.info}Downloading from remote [ {Colors.green}OK{Colors.end} ]{' '*10}")
 
@@ -120,7 +120,11 @@ class Translator(Tool):
 				__header	= [ "label", "en", "fr" ]
 				__writer	= DictWriter(csvFile, __header)
 				__rows		= list[dict[str, str]]([
-					{ "label": "HELLO_WORLD", "en": "Hello World", "fr": "Bonjour Monde" }
+					{
+						"label": "HELLO_WORLD",
+						"en": "Hello World",
+						"fr": "Bonjour Monde"
+					}
 				])
 
 				if(not csvFile.tell()):
@@ -198,6 +202,19 @@ class Translator(Tool):
 		try:
 			if(not self.__checkExistProject(args[0])):
 				raise(FileNotFoundError("Project doesn't exist on workspace"))
+
+			__projectPath	= abspath(f"{self.__path}/{args[0]}")
+			__regions		= [ r for r in listdir(__projectPath) if(".json" in r) ]
+
+			for region in __regions:
+				__regionPath = abspath(f"{__projectPath}/{region}")
+				if(args[1] in region):
+					print(f"{Icons.info}Viewing {__regionPath} file ...")
+					with open(__regionPath, "r", encoding=self.__cfg.getEncoding()) as json:
+						__translations = load(json)
+
+					for t in __translations:
+						print(f" {t}{' '*(30-len(t))}: {__translations[t]}")
 
 		except(FileNotFoundError) as e:
 			print(f"{Icons.warn}{e}")
