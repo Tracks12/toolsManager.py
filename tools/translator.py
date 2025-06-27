@@ -33,6 +33,7 @@ class Translator(Tool):
 
 		self._args	= [
 			(("-d", "--delete", "<project> <opt>"), ("Delete a project from workspace", "opt: -f to delete without asking")),
+			(("-l", "--list", ""), "List all projects in workspace"),
 			(("-n", "--new", "<project> <opt>"), ("Create a blank project in workspace", "opt: -r, --remote to specify a remote file to download")),
 			(("-t", "--translate", "<project>"), "Run a translation process by project"),
 			(("-v", "--view", "<project> <local>"), "Run a translation process by project"),
@@ -40,6 +41,7 @@ class Translator(Tool):
 
 		self._execs = [
 			lambda x:self._delete(x),
+			lambda x:self._list(),
 			lambda x:self._new(x),
 			lambda x:self._translate(x),
 			lambda x:self._view(x)
@@ -81,6 +83,23 @@ class Translator(Tool):
 
 		except(FileNotFoundError) as e:
 			print(f"{Icons.warn}{e}")
+
+	def _list(self) -> None:
+		__projects = listdir(self.__path)
+
+		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Region(s){' '*(12-len('Region(s)'))}Path" ])
+		for i, project in enumerate(__projects, start=1):
+			__regions = [ r for r in listdir(abspath(f"{self.__path}/{project}")) if(".json" in r) ]
+
+			table.append("".join([
+				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}.",
+				f"{' '*1}{Colors.cyan}{project.replace('-', ':').split('.')[0]}{Colors.end}",
+				f"{' '*(18-len(project.split('.')[0]))}{Colors.purple}{len(__regions)}{Colors.end}",
+				f"{' '*(12-len(str(len(__regions))))}{Colors.yellow}{abspath(f'{self.__path}/{project}')}{Colors.end}"
+			]))
+
+		_ = "\n".join([ f' {t}' for t in table ])
+		print(f"\n{_}")
 
 	def _new(self, args: list[str]) -> None:
 		try:
