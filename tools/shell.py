@@ -46,7 +46,7 @@ class Shell(Tool):
 		]
 
 		super().__init__()
-		self._run(args)
+		self._run(args, lambda:self._command(args[1: len(args)]))
 
 	def __checkExistSchedule(self, scheduleName: str) -> bool:
 		__schedules = [ s.split(".")[0] for s in listdir(self.__schedulesPath) ]
@@ -71,26 +71,6 @@ class Shell(Tool):
 
 		except(Exception) as e:
 			print(f"{Icons.err}An error occurred: {e}")
-
-	def _run(self, args: list[str]) -> bool:
-		try:
-			for i, a in enumerate(self._args):
-				if(args[1] in a[0]):
-					self._execs[i](args[2: len(args)])
-					return(True)
-
-			self._command(args[1: len(args)])
-
-		except(IndexError):
-			print(' To see more of command type "-h" or "--help" on arguments')
-
-		except(ValueError) as e:
-			print(f"{Icons.warn}{e}")
-
-		except(Exception):
-			print(f"{Icons.err}{format_exc()}")
-
-		return(False)
 
 	def _command(self, args: list[str]) -> None:
 		shell(" ".join(args))

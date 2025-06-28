@@ -13,6 +13,7 @@ r""" Base module for all CLI tools in the application.
 """
 
 from traceback import format_exc
+from typing import Callable
 
 from core.exceptions import ToolInitError
 from core.icons import Icons
@@ -89,7 +90,7 @@ class Tool:
 		except Exception as e:
 			raise(ToolInitError(self.name, f"Unexpected error during tool initialization: {e}"))
 
-	def _run(self, args: list[str]) -> bool:
+	def _run(self, args: list[str], default: Callable = None) -> bool:
 		""" Main argument parser and dispatcher.
 
 			Iterates through the tool's defined argument patterns (`_args`),
@@ -110,15 +111,20 @@ class Tool:
 					self._execs[i](args[2: len(args)])
 					return(True)
 
-			raise ValueError(f'Uknown argument "{args[1]}"')
+			if(default):
+				default()
+				return(True)
 
-		except IndexError:
-			print(' To see more of command type "-h" or "--help" on arguments')
+			else:
+				raise(ValueError(f'Uknown argument "{args[1]}"'))
 
-		except ValueError as e:
+		except(IndexError):
+			print(' To see more of command, type "-h" or "--help" on arguments')
+
+		except(ValueError) as e:
 			print(f"{Icons.warn}{e}")
 
-		except Exception:
+		except(Exception):
 			print(f"{Icons.err}{format_exc()}")
 
 		return(False)
