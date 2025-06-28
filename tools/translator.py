@@ -32,11 +32,11 @@ class Translator(Tool):
 		self.__setup()
 
 		self._args	= [
-			(("-c", "--check", "<project> <locale>"), "Run a translation process by project"),
-			(("-d", "--delete", "<project> <opt>"), ("Delete a project from workspace", "opt: -f to delete without asking")),
+			(("-c", "--check", "<project> <locale> *"), ("Show all translations contain in locale file", "opt: -s, --search to search a specific label in locale")),
+			(("-d", "--delete", "<project> *"), ("Delete a project from workspace", "opt: -f to delete without asking")),
 			(("-l", "--list", ""), "List all projects in workspace"),
-			(("-n", "--new", "<project> <opt>"), ("Create a blank project in workspace", "opt: -r, --remote to specify a remote file to download")),
-			(("-t", "--translate", "<project>"), "Run a translation process by project"),
+			(("-n", "--new", "<project> *"), ("Create a blank project in workspace", "opt: -r, --remote to specify a remote file to download")),
+			(("-t", "--translate", "<project>"), "Run a translation process by project")
 		]
 
 		self._execs = [
@@ -71,6 +71,53 @@ class Translator(Tool):
 
 		except(Exception) as e:
 			print(f"{Icons.err}An error occurred: {e}")
+
+	def _check(self, args: list[str]) -> None:
+		try:
+			if(not self.__checkExistProject(args[0])):
+				raise(FileNotFoundError("Project doesn't exist on workspace"))
+
+			__projectPath	= abspath(f"{self.__path}/{args[0]}")
+			__regions		= [ r for r in listdir(__projectPath) if(".json" in r) ]
+
+			if(len(args) == 1):
+				print(f"{Icons.warn}No locale was specified !")
+				print(f"{Icons.tips}Here the list of locales present in {__projectPath}")
+				print("".join([
+					"Locales: ",
+					" | ".join([ f"{Colors.purple}{r.split('.')[0]}{Colors.end}" for r in __regions ]) or f"{Colors.red}No locales{Colors.end}"
+				]))
+
+				return
+
+			for region in __regions:
+				if(args[1] in region):
+					__regionPath = abspath(f"{__projectPath}/{region}")
+					print(f"{Icons.info}Viewing {__regionPath} file ...")
+
+					with open(__regionPath, "r", encoding=self.__cfg.getEncoding()) as json:
+						__translations = load(json)
+
+					try:
+						if(args[2] in ("-s", "--search")):
+							print(f" {args[3]} : {__translations[args[3]]}")
+
+					except(IndexError):
+						for t in __translations:
+							print(f" {t}{' '*(30-len(t))}: {__translations[t]}")
+
+					except(KeyError):
+						print(f"{Icons.err}Label isn't found on selected locale")
+
+					return
+
+			print(f"{Icons.warn}Locale not found in {__projectPath}")
+
+		except(FileNotFoundError) as e:
+			print(f"{Icons.warn}{e}")
+
+		except(IndexError):
+			print(f"{Icons.warn}No project wasn't specified !")
 
 	def _delete(self, args: list[str]) -> None:
 		try:
@@ -154,7 +201,7 @@ class Translator(Tool):
 			print(f'"{args[0]}" was created in {self.__path}')
 
 		except(IndexError):
-			print(f"{Icons.warn}No project name was specified !")
+			print(f"{Icons.warn}No project name wasn't specified !")
 
 		except(FileExistsError) as e:
 			print(f"{Icons.warn}{e}")
@@ -216,42 +263,3 @@ class Translator(Tool):
 
 		except(FileNotFoundError) as e:
 			print(f"{Icons.warn}{e}")
-
-	def _check(self, args: list[str]) -> None:
-		try:
-			if(not self.__checkExistProject(args[0])):
-				raise(FileNotFoundError("Project doesn't exist on workspace"))
-
-			__projectPath	= abspath(f"{self.__path}/{args[0]}")
-			__regions		= [ r for r in listdir(__projectPath) if(".json" in r) ]
-
-			if(len(args) == 1):
-				print(f"{Icons.warn}No locale was specified !")
-				print(f"{Icons.tips}Here the list of locales present in {__projectPath}")
-				print("".join([
-					"Locales: ",
-					" | ".join([ f"{Colors.purple}{r.split('.')[0]}{Colors.end}" for r in __regions ]) or f"{Colors.red}No locales{Colors.end}"
-				]))
-
-				return
-
-			for region in __regions:
-				if(args[1] in region):
-					__regionPath = abspath(f"{__projectPath}/{region}")
-					print(f"{Icons.info}Viewing {__regionPath} file ...")
-
-					with open(__regionPath, "r", encoding=self.__cfg.getEncoding()) as json:
-						__translations = load(json)
-
-					for t in __translations:
-						print(f" {t}{' '*(30-len(t))}: {__translations[t]}")
-					
-					return
-
-			print(f"{Icons.warn}Locale not found in {__projectPath}")
-
-		except(FileNotFoundError) as e:
-			print(f"{Icons.warn}{e}")
-
-		except(IndexError):
-			print(f"{Icons.warn}No project was specified !")
