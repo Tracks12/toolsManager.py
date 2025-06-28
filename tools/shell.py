@@ -31,10 +31,10 @@ class Shell(Tool):
 
 		self._args = [
 			(("-c", "--command", "<cmd>"), "Run a bash command"),
-			(("-d", "--delete-schedule", "<sch> <opt>"), ("Delete a schedule of commands", "opt: -f to delete without asking")),
+			(("-d", "--delete-schedule", "<sch> *"), ("Delete a schedule of commands", "opt: -f to delete without asking")),
 			(("-l", "--list-schedule", ""), "List all schedules save in workspace"),
 			(("-n", "--new-schedule", "<sch>"), "Create a schedule of commands"),
-			(("-r", "--run-schedule", "<sch> <opt>"), ("Run a schedule of commands", "opt: -p to pause between all commands"))
+			(("-r", "--run-schedule", "<sch> *"), ("Run a schedule of commands", "opt: -p to pause between all commands"))
 		]
 
 		self._execs = [

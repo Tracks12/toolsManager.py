@@ -37,8 +37,8 @@ class WslBuilder(Tool):
 		self.__setup()
 
 		self._args = [
-			(("-d", "--delete", "<distro> <opt>"), ("Remove a wsl distribution image and disk", "opt: -f to delete without asking")),
-			(("-D", "--full-delete", "<distro> <opt>"), ("Remove a wsl distribution image and disk with docker traces", "opt: -f to delete without asking")),
+			(("-d", "--delete", "<distro> *"), ("Remove a wsl distribution image and disk", "opt: -f to delete without asking")),
+			(("-D", "--full-delete", "<distro> *"), ("Remove a wsl distribution image and disk with docker traces", "opt: -f to delete without asking")),
 			(("-e", "--export", "<distro>"), "Export a wsl distribution into a tar image"),
 			(("-i", "--install", "<distro>"), "Install a wsl distribution to workspace"),
 			(("-I", "--init", ""), "Init a wsl builder instance with docker"),
