@@ -10,6 +10,8 @@
 
 ## I. Preview
 
+![preview](previews/shell.gif)
+
 [Summary](#summary)
 
 [Back to index](../README.md)

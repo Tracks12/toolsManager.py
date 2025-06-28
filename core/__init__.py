@@ -28,7 +28,7 @@ INFO = dict[str, str]({
 	"author": "Florian Cardinal",
 	"github": "https://github.com/Tracks12/toolsManager.py",
 	"name": "toolsManager.py",
-	"version": "0.1",
+	"version": "0.3",
 })
 """ Contains application information such as version, git commit hash, and other metadata
 """

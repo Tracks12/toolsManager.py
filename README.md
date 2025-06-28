@@ -80,7 +80,7 @@ Usage: `$ python main.py <argument>`
 
 ### III.2 Main Program
 
-Usage: `$ python main.py`
+Execute the main script at the root of project folder with `$ python main.py`, when you arrived at the main menu, you can run directly all tools in registry
 
 ```
    _              _    __  __
@@ -89,12 +89,13 @@ Usage: `$ python main.py`
   | __/ _ \ / _ \| |/ _/|\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '__|
   | || (_) | (_) | _\ \ |  | | (_| | | | | (_| | (_| |  __/ |
    \__\___/ \___/|/___/_|  |_|\__,_|_| |_|\__,_|\__, |\___|_|
-     version: 0.1                               |___/
+     version: 0.3                               |___/
 
  List of commands:
 
  (mat)rix
  (sh)ell
+ (tr)anslator
  (wb)wslbuilder
 
  (s)ettings
@@ -109,6 +110,27 @@ Usage: `$ python main.py`
 [Summary](#summary)
 
 ## IV. Tool Management
+
+All tools can be created with `$ python main.py -g`, after that, the program ask you 3 questions about the new tool you want to create, once the tool was created, you must import it and enter it in the tool registry at [`tools/__init__.py`](tools/__init__.py)
+
+```python
+from core.tool import Tool
+
+from tools.matrix import Matrix
+from tools.shell import Shell
+from tools.translator import Translator
+from tools.wslbuilder import WslBuilder
+
+TOOLS: tuple[Tool] = (
+	Matrix,
+	Shell,
+	Translator,
+	WslBuilder,
+)
+""" Tools registry """
+```
+
+Once the tool is declared in the registry, you can call it in the main program or as a command argument with `-t`
 
 [Summary](#summary)
 
@@ -135,18 +157,18 @@ class Hello(Tool):
 	version	= "0.1a" # Tool version
 
 	def __init__(self, args: list[str]):
-		# Initialization of Tool
-		super().__init__()
-
 		# Argument registry corresponding to lamdba registry index
 		self._args	= [
 			(("-s", "--say-hello", ""), "Say a hello world")
-		] + self._args[:]
+		]
 
 		# Lamdba registry corresponding to argument registry index
 		self._execs = [
 			lambda x:self._sayHello(x)
-		] + self._execs[:]
+		]
+
+		# Initialization of Tool
+		super().__init__()
 
 		# _run(args) method to lauch method in lambda registry with arguments
 		# tips: you can rewrite the methode if you want to put some exception or rules to launch

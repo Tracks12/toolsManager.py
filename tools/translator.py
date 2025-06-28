@@ -32,19 +32,19 @@ class Translator(Tool):
 		self.__setup()
 
 		self._args	= [
+			(("-c", "--check", "<project> <locale>"), "Run a translation process by project"),
 			(("-d", "--delete", "<project> <opt>"), ("Delete a project from workspace", "opt: -f to delete without asking")),
 			(("-l", "--list", ""), "List all projects in workspace"),
 			(("-n", "--new", "<project> <opt>"), ("Create a blank project in workspace", "opt: -r, --remote to specify a remote file to download")),
 			(("-t", "--translate", "<project>"), "Run a translation process by project"),
-			(("-v", "--view", "<project> <locale>"), "Run a translation process by project"),
 		]
 
 		self._execs = [
+			lambda x:self._check(x),
 			lambda x:self._delete(x),
 			lambda x:self._list(),
 			lambda x:self._new(x),
-			lambda x:self._translate(x),
-			lambda x:self._view(x)
+			lambda x:self._translate(x)
 		]
 
 		super().__init__()
@@ -217,7 +217,7 @@ class Translator(Tool):
 		except(FileNotFoundError) as e:
 			print(f"{Icons.warn}{e}")
 
-	def _view(self, args: list[str]) -> None:
+	def _check(self, args: list[str]) -> None:
 		try:
 			if(not self.__checkExistProject(args[0])):
 				raise(FileNotFoundError("Project doesn't exist on workspace"))
