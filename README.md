@@ -5,20 +5,20 @@ A multi-tool with a generic template for developing management tools like WSLBui
 ## Summary
 
 - [**ToolsManager.py**](#toolsmanagerpy)
-	- [Summary](#summary)
-	- [I. Preview](#i-preview)
-	- [II. Prerequisites](#ii-prerequisites)
-		- [II.1 Dependencies](#ii1-dependencies)
-	- [III. Uses](#iii-uses)
-		- [III.1 Command Prompt](#iii1-command-prompt)
-		- [III.2 Main Program](#iii2-main-program)
-	- [IV. Tool Management](#iv-tool-management)
-		- [IV.1 Tool Structure](#iv1-tool-structure)
-		- [IV.2 Tools Registry](#iv2-tools-registry)
-		- [IV.3 Tools Index](#iv3-tools-index)
-	- [V. Options \& Configurations](#v-options--configurations)
-	- [VI. Contributing](#vi-contributing)
-	- [VII. License](#vii-license)
+  - [Summary](#summary)
+  - [I. Preview](#i-preview)
+  - [II. Prerequisites](#ii-prerequisites)
+    - [II.1 Dependencies](#ii1-dependencies)
+  - [III. Uses](#iii-uses)
+    - [III.1 Command Prompt](#iii1-command-prompt)
+    - [III.2 Main Program](#iii2-main-program)
+  - [IV. Tool Management](#iv-tool-management)
+    - [IV.1 Tool Structure](#iv1-tool-structure)
+    - [IV.2 Tools Registry](#iv2-tools-registry)
+    - [IV.3 Tools Index](#iv3-tools-index)
+  - [V. Options \& Configurations](#v-options--configurations)
+  - [VI. Contributing](#vi-contributing)
+  - [VII. License](#vii-license)
 
 ## I. Preview
 
@@ -48,8 +48,7 @@ A multi-tool with a generic template for developing management tools like WSLBui
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 - [traceback.format_exc](https://docs.python.org/3/library/traceback.html#traceback.format_exc)
 
-> [!Note]
-> [readline](https://docs.python.org/3/library/readline.html) is for multiline finder in linux system
+> [!Note] > [readline](https://docs.python.org/3/library/readline.html) is for multiline finder in linux system
 
 [Summary](#summary)
 
@@ -66,15 +65,15 @@ To use the tool manager, you need to open a terminal prompt and run the python s
 
 Usage: `$ python main.py <argument>`
 
-| Arguments             | Values ​             ​| Descriptions                                |
-| --------------------- | ------------------- | ------------------------------------------- |
-| `-g`, `--generate`    | -                   | Generate a tool with interactive inputs     |
-| `-l`, `--list`        | -                   | Display the list of Python tools            |
-| `-s`, `--set`         | `<prop>`, `<value>` | Apply new configuration value to a property |
-| `-t`, `--tool`        | `<tool>`            | Launch a tool                               |
-| `-h`, `--help`        | -                   | Display the help menu                       |
-| `-D`, `--debug`       | -                   | Run in debugger mode                        |
-| `-v`, `--version`     | -                   | Display the program version                 |
+| Arguments          | Values ​ ​          | Descriptions                                |
+| ------------------ | ------------------- | ------------------------------------------- |
+| `-g`, `--generate` | -                   | Generate a tool with interactive inputs     |
+| `-l`, `--list`     | -                   | Display the list of Python tools            |
+| `-s`, `--set`      | `<prop>`, `<value>` | Apply new configuration value to a property |
+| `-t`, `--tool`     | `<tool>`            | Launch a tool                               |
+| `-h`, `--help`     | -                   | Display the help menu                       |
+| `-D`, `--debug`    | -                   | Run in debugger mode                        |
+| `-v`, `--version`  | -                   | Display the program version                 |
 
 [Summary](#summary)
 
@@ -113,24 +112,14 @@ Execute the main script at the root of project folder with `$ python main.py`, w
 
 All tools can be created with `$ python main.py -g`, after that, the program ask you 3 questions about the new tool you want to create, once the tool was created, you must import it and enter it in the tool registry at [`tools/__init__.py`](tools/__init__.py)
 
-```python
-from core.tool import Tool
+Once the tool is declared in the [tools registry](#iv2-tools-registry), you can call it in the main program or as a command argument with `-t`
 
-from tools.matrix import Matrix
-from tools.shell import Shell
-from tools.translator import Translator
-from tools.wslbuilder import WslBuilder
+To recognize a tool, it is imperative to follow the Tool class nomenclature, while providing the following metadata for proper management:
 
-TOOLS: tuple[Tool] = (
-	Matrix,
-	Shell,
-	Translator,
-	WslBuilder,
-)
-""" Tools registry """
-```
-
-Once the tool is declared in the registry, you can call it in the main program or as a command argument with `-t`
+- `command`: a tuple that references the tool's command and main alias, along with its acronym for display in the main menu
+- `name`: a string representing the tool's name
+- `path`: the absolute path to the tool's file (usually declared with the constant `__file__`)
+- `version`: a string representing the tool's version (e.g., 0.1a, 1.0, 2.0)
 
 [Summary](#summary)
 
@@ -188,6 +177,24 @@ class Hello(Tool):
 
 ### IV.2 Tools Registry
 
+To use the tool you just created, you must declare it in the tool registry by importing it into the [`tools/__init__.py`](tools/__init__.py) file and declaring it in the `TOOLS` constant
+
+```python
+from core.tool import Tool
+
+from tools.matrix import Matrix # Tool importation
+...
+
+TOOLS: tuple[Tool] = (
+	Matrix, # Tool declaration
+	...
+)
+""" Tools registry """
+```
+
+> [!note]
+> Eventually, this method of tool declaration will be automated in the tool generation script
+
 [Summary](#summary)
 
 ### IV.3 Tools Index
@@ -195,7 +202,7 @@ class Hello(Tool):
 | Tool                             | Version | Description                                |
 | -------------------------------- | ------- | ------------------------------------------ |
 | [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
-| [Translator](docs/Translator.md) | v1.0    | Translation tool manager                   |
+| [Translator](docs/Translator.md) | v1.1    | Translation tool manager                   |
 | [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
 
 [Summary](#summary)
@@ -216,7 +223,7 @@ You can modify it directly (which is not recommended) or use the configuration p
 
 > [!Note]
 > You can manage settings with cli command `$ python main.py -s encoding utf-8` inside a shell
-> 
+>
 > Or directly in main config index by typing `settings` & `set encoding utf-8` inside the program
 
 [Summary](#summary)

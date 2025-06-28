@@ -24,7 +24,7 @@ class Translator(Tool):
 	command	= (("translator", "tr"), "(tr)anslator")
 	name	= "Translator"
 	path	= __file__
-	version	= "1.0"
+	version	= "1.1"
 
 	def __init__(self, args: list[str]):
 		self.__cfg = Config()

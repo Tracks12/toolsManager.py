@@ -31,6 +31,9 @@ Usage in script: `shell <argument>`
 | `-h`, `--help`            |              | Show the helper commands menu        |
 | `-v`, `--version`         |              | Show version of tool                 |
 
+> [!Tip]
+> You can run a shell command without the `-c` argument like this: `shell ls -la`
+
 [Summary](#summary)
 
 [Back to index](../README.md)
