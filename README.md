@@ -48,7 +48,9 @@ A multi-tool with a generic template for developing management tools like WSLBui
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 - [traceback.format_exc](https://docs.python.org/3/library/traceback.html#traceback.format_exc)
 
-> [!Note] > [readline](https://docs.python.org/3/library/readline.html) is for multiline finder in linux system
+> [!Note]
+>
+> [readline](https://docs.python.org/3/library/readline.html) is for multiline finder in linux system
 
 [Summary](#summary)
 
