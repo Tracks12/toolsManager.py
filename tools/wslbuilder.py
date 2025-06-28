@@ -33,39 +33,35 @@ class WslBuilder(Tool):
 	version	= "1.1"
 
 	def __init__(self, args: list[str]):
-		super().__init__()
-
 		self.__path = str(abspath(f"{dirname(abspath(__file__))}/../{self.name}"))
 		self.__setup()
 
 		self._args = [
-			(("-c", "--create", "<distro>"), "Create a wsl distribution"),
-			(("-d", "--delete", "<distro>"), "Remove a wsl distribution image and disk"),
-			(("-D", "--full-delete", "<distro>"), "Remove a wsl distribution image and disk with docker traces"),
+			(("-d", "--delete", "<distro> *"), ("Remove a wsl distribution image and disk", "opt: -f to delete without asking")),
+			(("-D", "--full-delete", "<distro> *"), ("Remove a wsl distribution image and disk with docker traces", "opt: -f to delete without asking")),
 			(("-e", "--export", "<distro>"), "Export a wsl distribution into a tar image"),
 			(("-i", "--install", "<distro>"), "Install a wsl distribution to workspace"),
 			(("-I", "--init", ""), "Init a wsl builder instance with docker"),
 			(("-l", "--list", ""), "List all wsl distributions"),
+			(("-n", "--new", "<distro>"), "Create a wsl distribution"),
 			(("-S", "--stat", "<distro>"), "Show statistics about a wsl distributions"),
 			(("-s", "--start", "<distro>"), "Launch a wsl instance")
-		] + self._args[:]
+		]
 
 		self._execs= [
-			lambda x:self._create(x),
 			lambda x:self._delete(x),
 			lambda x:self._fullDelete(x),
 			lambda x:self._export(x),
 			lambda x:self._install(x),
 			lambda x:self._init(),
 			lambda x:self._list(),
+			lambda x:self._new(x),
 			lambda x:self._stat(x),
 			lambda x:self._start(x)
-		] + self._execs[:]
+		]
 
+		super().__init__()
 		self._run(args)
-
-	def __ask(self, msg: str = "Are you sure ?") -> bool:
-		return(bool(input(f"{msg} [y/N] ").lower() in ("y", "yes")))
 
 	def __checkActiveDistro(self, distroname: str) -> bool:
 		__distroPath = abspath(f"{self.__path}/{distroname}")
@@ -103,7 +99,7 @@ class WslBuilder(Tool):
 		except(Exception) as e:
 			print(f"{Icons.err}An error occurred: {e}")
 
-	def _create(self, args: list[str]) -> None:
+	def _new(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
@@ -120,7 +116,7 @@ class WslBuilder(Tool):
 			shell(f"wsl docker export {__distroName} > {__distroPath}/{__distroName}.tar")
 			shell(f"wsl --import {__distroName} {__distroPath} {__distroPath}/{__distroName}.tar")
 
-			if(self.__ask("Did you want to start it ?")):
+			if(self.ask("Did you want to start it ?")):
 				self._start(args)
 
 		except(FileExistsError):
@@ -135,7 +131,7 @@ class WslBuilder(Tool):
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
 		if(self.__checkExistDistro(__distroName)):
-			if(("-f" in args) or self.__ask(f"Confirm the deletion of {args[0]} ?")):
+			if(("-f" in args) or self.ask(f"Confirm the deletion of {args[0]} ?")):
 				shell(f"wsl --unregister {__distroName}")
 				remove(f"{__distroPath}/{__distroName}.tar")
 				rmdir(f"{__distroPath}")
@@ -143,7 +139,7 @@ class WslBuilder(Tool):
 	def _fullDelete(self, args: list[str]) -> None:
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
-		if(self.__ask(f"Confirm the deletion of {args[0]} ?")):
+		if(("-f" in args) or self.ask(f"Confirm the deletion of {args[0]} ?")):
 			shell(f"wsl docker rm {__distroName}")
 			shell(f"wsl docker rmi {args[0]}")
 
@@ -170,7 +166,7 @@ class WslBuilder(Tool):
 			if(not self.__checkActiveDistro(__distroName)):
 				shell(f"wsl --import {__distroName} {__distroPath} {abspath(f'{__distroPath}/{__distroName}.tar')}")
 
-			if(self.__ask("Did you want to start it ?")):
+			if(self.ask("Did you want to start it ?")):
 				self._start(args)
 
 		except(FileNotFoundError):

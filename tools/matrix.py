@@ -18,18 +18,17 @@ class Matrix(Tool):
 	version	= "0.1a"
 
 	def __init__(self, args: list[str]):
-		super().__init__()
-
 		self._args	= [
 			(("-n", "--new", "<x> <y>"), "Create a matrix with custom dimensions"),
 			(("-r", "--random", "<x> <y> <i>"), "Create a matrix with placed random point")
-		] + self._args[:]
+		]
 
 		self._execs = [
 			lambda x:self._new(x),
 			lambda x:self._random(x)
-		] + self._execs[:]
+		]
 
+		super().__init__()
 		self._run(args)
 
 	def _new(self, args: list[str]) -> list[list[int]]:

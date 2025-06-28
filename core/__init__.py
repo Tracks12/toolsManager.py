@@ -19,6 +19,7 @@ from traceback import format_exc
 
 from core.colors import Colors
 from core.config import ACCEPT_ENCODING, Config, getConfig, setConfig
+from core.exceptions import RequestError, ToolInitError, ValidationError
 from core.generate import Generate
 from core.icons import Icons
 from core.tool import Tool
@@ -27,7 +28,7 @@ INFO = dict[str, str]({
 	"author": "Florian Cardinal",
 	"github": "https://github.com/Tracks12/toolsManager.py",
 	"name": "toolsManager.py",
-	"version": "0.1",
+	"version": "0.3",
 })
 """ Contains application information such as version, git commit hash, and other metadata
 """
