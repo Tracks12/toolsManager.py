@@ -144,34 +144,30 @@ def config(cfg: Config) -> bool:
 
 		__args = list[str](split(REGEX_ARGS, prompt))
 
-		if(__args[0] in __cmds[0][0]):
-			try:
+		try:
+			if(__args[0] in __cmds[0][0]): # set, s
 				setConfig(cfg, __args[1], __args[2])
 
-			except(IndexError):
-				print(f"{Icons.warn}No value was entered !")
-
-			except(Exception) as e:
-				print(f"{Icons.err}{e}")
-
-		elif(__args[0] in __cmds[1][0]):
-			try:
+			elif(__args[0] in __cmds[1][0]): # get, g
 				getConfig(cfg, __args[1])
 
-			except(IndexError):
-				print(f"{Icons.warn}No value was entered !")
+			elif(__args[0] in __cmds[-2][0]): # help, h
+				helper(__cmds)
 
-		elif(__args[0] in __cmds[-2][0]):
-			helper(__cmds)
+			elif(__args[0] in __cmds[-1][0]): # back, b
+				break
 
-		elif(__args[0] in __cmds[-1][0]):
-			break
+			elif(not __args[0]):
+				pass
 
-		elif(not __args[0]):
-			pass
+			else:
+				print(f"{Icons.warn}Uknown command !")
 
-		else:
-			print(f"{Icons.warn}Uknown command !")
+		except(IndexError):
+			print(f"{Icons.warn}No value was entered !")
+
+		except(Exception) as e:
+			print(f"{Icons.err}{e}")
 
 	return(True)
 
@@ -207,25 +203,21 @@ def main(cfg: Config) -> bool:
 
 		for i, command in enumerate(__cmds[0:len(__cmds)-4]):
 			if(__args[0] in command[0]):
-				try:
-					__f = bool(True)
-					launch(TOOLS[i], __args)
-					break
-
-				except:
-					print(f'{Icons.err}"{command[0][0]}" not implemented !')
+				__f = bool(True)
+				launch(TOOLS[i], __args)
+				break
 
 		if(not __f):
-			if(__args[0] in __cmds[-4][0]):
+			if(__args[0] in __cmds[-4][0]): # settings, s
 				config(cfg)
 
-			elif(__args[0] in __cmds[-3][0]):
+			elif(__args[0] in __cmds[-3][0]): # version, v
 				version()
 
-			elif(__args[0] in __cmds[-2][0]):
+			elif(__args[0] in __cmds[-2][0]): # help, h
 				helper(__cmds)
 
-			elif(__args[0] in __cmds[-1][0]):
+			elif(__args[0] in __cmds[-1][0]): # quit, q
 				break
 
 			elif((not __args[0]) or __f):
