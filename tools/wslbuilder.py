@@ -21,6 +21,7 @@ import re
 
 from core import stringSize
 from core.colors import Colors
+from core.constants import EXTRACT_PATH
 from core.icons import Icons
 from core.tool import Tool
 
@@ -174,7 +175,7 @@ class WslBuilder(Tool):
 			print(f"{Icons.tips}Make sure you have {__distroName} in {self.__path} with {__distroName}.tar inside")
 
 	def _init(self) -> None:
-		__libspath = abspath(f"{self.__path}/../libs/unpacked/wslbuilder")
+		__libspath = abspath(f"{EXTRACT_PATH}/wslbuilder")
 
 		try:
 			if(not isdir(__libspath)):

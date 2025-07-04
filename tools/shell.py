@@ -6,7 +6,6 @@
 from json import dump, load
 from os import listdir, mkdir, remove, system as shell
 from os.path import abspath, dirname
-from traceback import format_exc
 
 import re
 

@@ -16,9 +16,9 @@ try:
 		import readline
 
 	# --- Importing internal dependencies ---
-	from core import INFO, REGEX_ARGS
 	from core import helper, launch, sortTools, splash, version
 	from core.colors import Colors
+	from core.constants import CMD_CLEAR, CMD_PYTHON, INFO, REGEX_ARGS
 	from core.config import Config, getConfig, setConfig
 	from core.generate import Generate
 	from core.icons import Icons
@@ -32,6 +32,7 @@ except(RuntimeError) as e:
 
 except(ModuleNotFoundError) as e:
 	print("[ ERROR ]: " + e.msg)
+	print(' (?) - Try to run "pip install -r requirements.txt" to install dependencies')
 	exit()
 
 def arg(cfg: Config) -> bool:
@@ -103,9 +104,9 @@ def arg(cfg: Config) -> bool:
 			__isLinux = bool(system() == "Linux")
 
 			while(True):
-				shell("clear" if(__isLinux) else "cls")
+				shell(CMD_CLEAR)
 				print(f"{Icons.info}Lanched in debug mod")
-				shell(f"python{'3' if(__isLinux) else ''} main.py")
+				shell(f"{CMD_PYTHON} main.py")
 				input(f"{Icons.info}Press any keys to continue...")
 
 		elif(argv[1] in __args["prefix"][-1][0]): # -v, --version

@@ -6,14 +6,12 @@ from os.path import abspath, basename, isdir
 from shutil import rmtree
 from sys import argv
 
+from core.constants import EXTRACT_PATH, LIBS_PATH
 from core.rarfile import RarFile
 
 LIBS_REGISTRY = list[str]([
 	"wslbuilder"
 ])
-
-LIBS_PATH		= abspath("libs/")
-EXTRACT_PATH	= abspath(f"{LIBS_PATH}/unpacked/")
 
 def ask(msg: str = "Are you sure ?") -> bool:
 	return(bool((input(f"{msg} [y/N] ").lower() or "n") == "y"))

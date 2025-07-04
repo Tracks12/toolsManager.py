@@ -15,11 +15,8 @@ r""" Configuration management for tools.
 from json import JSONDecodeError, dump, load
 from os.path import abspath
 
+from core.constants import ACCEPT_ENCODING
 from core.icons import Icons
-
-ACCEPT_ENCODING	: tuple[str] = ("ascii", "utf-8", "utf-16", "utf-32")
-""" Contains application encoding, including "ascii", "utf-8", "utf-16", "utf-32"
-"""
 
 class Config:
 

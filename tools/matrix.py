@@ -11,9 +11,8 @@ from time import sleep
 from traceback import format_exc
 
 from core.colors import Colors
+from core.constants import CMD_CLEAR
 from core.tool import Tool
-
-CMD_CLEAR = "clear" if(system() == "Linux") else "cls"
 
 class Matrix(Tool):
 	command	= (("matrix", "mat"), "(mat)rix")
@@ -132,8 +131,8 @@ class Matrix(Tool):
 				}
 
 				while(sum([ value for x in _matrix for value in x ]) != (len(_matrix)*len(_matrix[0]), 0)[i%2]):
-					shell(CMD_CLEAR)
 					_matrix = _execs[i%2](_matrix)
+					shell(CMD_CLEAR)
 					self.__displayMatrix(_matrix, _stats)
 
 					if(_keyPressed[0]):

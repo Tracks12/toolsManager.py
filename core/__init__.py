@@ -7,11 +7,6 @@ r""" Package initialization for `core`.
 	such as `get_config()` for loading configurations and `initialize_logger()` for setting up logging.
 	It ensures that the core components are ready for use when the package is imported.
 
-	Constants:
-	- INFO: Contains application information such as version, git commit hash, and other metadata.
-	- REGEX_ARGS: A regular expression pattern used to parse and split argument strings into lists.
-	- UNITS: Units of measurement for bytes, including b, Kb, Mb, Gb, Tb, etc., to facilitate size conversions.
-
 """
 
 from time import sleep
@@ -19,27 +14,11 @@ from traceback import format_exc
 
 from core.colors import Colors
 from core.config import ACCEPT_ENCODING, Config, getConfig, setConfig
+from core.constants import CMD_CLEAR, CMD_PYTHON, ENABLE_COLOR, EXTRACT_PATH, INFO, LIBS_PATH, REGEX_ARGS, UNITS
 from core.exceptions import RequestError, ToolInitError, ValidationError
 from core.generate import Generate
 from core.icons import Icons
 from core.tool import Tool
-
-INFO = dict[str, str]({
-	"author": "Florian Cardinal",
-	"github": "https://github.com/Tracks12/toolsManager.py",
-	"name": "toolsManager.py",
-	"version": "0.3",
-})
-""" Contains application information such as version, git commit hash, and other metadata
-"""
-
-REGEX_ARGS = str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
-""" A regular expression pattern used to parse and split argument strings into lists
-"""
-
-UNITS = tuple[str](("b", "Kb", "Mb", "Gb", "Tb"))
-""" Units of measurement for bytes, including b, Kb, Mb, Gb, Tb, etc., to facilitate size conversions
-"""
 
 def helper(commands: tuple) -> None:
 	colors	= tuple[str]((Colors.cyan, Colors.yellow, Colors.red))

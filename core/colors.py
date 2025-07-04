@@ -11,11 +11,8 @@ r""" Abstract base class for color handling.
 
 from json import load
 from os.path import abspath
-from platform import system
 
-ENABLE_COLOR = bool(system() == "Linux")
-""" Color application state constant
-"""
+from core.constants import ENABLE_COLOR
 
 try:
 	with open(abspath("config.json"), "r", encoding="utf-8") as cfgFile:

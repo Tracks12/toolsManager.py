@@ -144,4 +144,5 @@ class Generate:
 			print(f"{Icons.err}{e}")
 			return(False)
 
+		print(f"{Icons.info}Tool file {self.__path} was created successfully")
 		return(True)
