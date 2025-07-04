@@ -106,10 +106,11 @@ class Tool:
 		"""
 
 		try:
-			for i, a in enumerate(self._args):
-				if(args[1] in a[0]):
-					self._execs[i](args[2: len(args)])
-					return(True)
+			if(len(args) > 1):
+				for i, arg in enumerate(self._args):
+					if(args[1] in arg[0]):
+						self._execs[i](args[2: len(args)])
+						return(True)
 
 			if(default):
 				default()

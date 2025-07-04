@@ -48,7 +48,7 @@ class Translator(Tool):
 		]
 
 		super().__init__()
-		self._run(args)
+		self._run(args, lambda:self._helper())
 
 	def __checkExistProject(self, distroName: str) -> bool:
 		__distros = listdir(self.__path)
@@ -99,15 +99,18 @@ class Translator(Tool):
 						__translations = load(json)
 
 					try:
-						if(args[2] in ("-s", "--search")):
+						if(any(a in ("-s", "--search") for a in args)):
 							print(f" {args[3]} : {__translations[args[3]]}")
+							return
 
-					except(IndexError):
 						for t in __translations:
 							print(f" {t}{' '*(30-len(t))}: {__translations[t]}")
 
+					except(IndexError):
+						print(f"{Icons.warn}No label was specified !")
+
 					except(KeyError):
-						print(f"{Icons.err}Label isn't found on selected locale")
+						print(f"{Icons.warn}Label isn't found on selected locale")
 
 					return
 

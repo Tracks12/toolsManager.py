@@ -8,7 +8,7 @@ __pycache__
 *.pyc
 
 # Packages
-/libs/wslbuilder
+/libs/unpacked/
 /Shell/
 /Translator/
 /WSLBuilder/

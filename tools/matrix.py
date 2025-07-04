@@ -3,7 +3,9 @@
 
 # tools/matrix.py
 
+from keyboard import is_pressed, on_press
 from os import system as shell
+from platform import system
 from random import randrange
 from time import sleep
 from traceback import format_exc
@@ -11,11 +13,15 @@ from traceback import format_exc
 from core.colors import Colors
 from core.tool import Tool
 
+CMD_CLEAR = "clear" if(system() == "Linux") else "cls"
+
 class Matrix(Tool):
 	command	= (("matrix", "mat"), "(mat)rix")
 	name	= "Matrix"
 	path	= __file__
-	version	= "0.1a"
+	version	= "0.2a"
+
+	__sleep = 0
 
 	def __init__(self, args: list[str]):
 		self._args	= [
@@ -23,76 +29,70 @@ class Matrix(Tool):
 			(("-r", "--random", "<x> <y> <i>"), "Create a matrix with placed random point")
 		]
 
-		self._execs = [
+		self._execs	= [
 			lambda x:self._new(x),
 			lambda x:self._random(x)
 		]
 
 		super().__init__()
-		self._run(args)
-
-	def _new(self, args: list[str]) -> list[list[int]]:
-		shell("clear")
-		matrix = self.__createMatrix(int(args[0]), int(args[1]))
-		self.__displayMatrix(matrix)
-
-		return(matrix)
-
-	def _random(self, args: list[str]) -> None:
-		try:
-			matrix = self._new(args)
-			input("\nPress key to start ...")
-
-			_exec = (
-				lambda x:self.__addRandomPoint(x),
-				lambda x:self.__removeRandomPoint(x)
-			)
-
-			x = int(args[2] if(len(args) == 3) else 3)
-			for i in range(0, x):
-				stats = {
-					"Iterations": f"{i+1}/{x}"
-				}
-
-				while(sum([ value for x in matrix for value in x ]) != (len(matrix)*len(matrix[0]), 0)[i%2]):
-					shell("clear")
-					matrix = _exec[i%2](matrix)
-					self.__displayMatrix(matrix, stats)
-					sleep(.05)
-
-		except:
-			print(format_exc())
-
-	def __setPoint(self, matrix: list[list[int]], x: int, y: int, value: int = 1) -> list[list[int]]:
-		matrix[y][x] = round(value, 2)
-
-		return(matrix)
-
-	def __randomXY(self, xMax: int = 5, yMax: int = 5):
-			x = randrange(0, xMax)
-			y = randrange(0, yMax)
-
-			return x, y
+		self._run(args, lambda:self._helper())
 
 	def __addRandomPoint(self, matrix: list[list[int]]) -> list[list[int]]:
-		dim = (len(matrix[0]), len(matrix))
-		x, y = self.__randomXY(dim[0], dim[1])
+		_dim = (len(matrix[0]), len(matrix))
 
 		while(True):
-			x, y = self.__randomXY(dim[0], dim[1])
+			x, y = self.__randomXY(_dim[0], _dim[1])
 
 			if(not matrix[y][x]):
 				matrix = self.__setPoint(matrix, x, y, 1)
 				break
 
 		return(matrix)
-	
+
+	def __createMatrix(self, x: int, y: int) -> list[list[int]]:
+		_matrix	= list[list[int]]([])
+
+		for i in range(0, int(y)):
+			_matrix.append([])
+
+			for j in range(0, int(x)):
+				_matrix[i].append(0)
+
+		return(_matrix)
+
+	def __displayMatrix(self, matrix: list[list[int]], stats: dict = {}) -> None:
+		_output	= list[str]([])
+		_values	= sum([ value for x in matrix for value in x ])
+		_cells	= int(len(matrix)*len(matrix[0]))
+		_		= str(" "*2)
+		_fill	= str(round((_values/_cells)*100, 2))
+
+		for i, row in enumerate(matrix):
+			_output.append("")
+			_sum = sum(row)
+			_output[i] += f" {row} = {Colors.red if(_sum < (len(matrix[0])/3)) else Colors.green}{_sum}{Colors.end}{' '*(2-len(str(_sum)))}"
+
+		if(len(matrix) > 2):
+			_output[-3] += f"{_}Points : {_values}"
+			_output[-2] += f"{_}Cells  : {_cells}"
+			_output[-1] += f"{_}Filled : {_fill}{' '*(3-len(_fill))} %"
+
+		if(stats):
+			_output[0] += f"{_}Iteration(s) : {stats['Iterations']}"
+
+		print(f"\n".join(_output))
+
+	def __onKeyPress(self, keys: list[bool]) -> None:
+		keys[0] = True
+
+	def __randomXY(self, xMax: int = 5, yMax: int = 5) -> tuple[int]:
+		return(randrange(0, xMax), randrange(0, yMax))
+
 	def __removeRandomPoint(self, matrix: list[list[int]]) -> list[list[int]]:
-		dim = (len(matrix[0]), len(matrix))
-		x, y = self.__randomXY(dim[0], dim[1])
+		_dim = (len(matrix[0]), len(matrix))
 
 		while(True):
-			x, y = self.__randomXY(dim[0], dim[1])
+			x, y = self.__randomXY(_dim[0], _dim[1])
 
 			if(matrix[y][x]):
 				matrix = self.__setPoint(matrix, x, y, 0)
@@ -100,36 +100,60 @@ class Matrix(Tool):
 
 		return(matrix)
 
-	def __createMatrix(self, x: int, y: int) -> list[list[int]]:
-		matrix = list[list[int]]([])
-
-		for i in range(0, int(y)):
-			matrix.append([])
-
-			for j in range(0, int(x)):
-				matrix[i].append(0)
+	def __setPoint(self, matrix: list[list[int]], x: int, y: int, value: int = 1) -> list[list[int]]:
+		matrix[y][x] = int(value)
 
 		return(matrix)
 
-	def __displayMatrix(self, matrix: list[list[int]], stats: dict = {}) -> None:
-		output = list[str]([])
-		values = sum([ value for x in matrix for value in x ])
-		cells  = int(len(matrix)*len(matrix[0]))
-		_ = str(" "*2)
-		_fill = str(round((values/cells)*100, 2))
+	def _new(self, args: list[str]) -> list[list[int]]:
+		shell(CMD_CLEAR)
+		_matrix = self.__createMatrix(int(args[0]), int(args[1]))
+		self.__displayMatrix(_matrix)
 
-		for i, row in enumerate(matrix):
-			output.append("")
-			_sum = sum(row)
+		return(_matrix)
 
-			output[i] += f" {row} = {Colors.red if(_sum < (len(matrix[0])/3)) else Colors.green}{_sum}{Colors.end}{' '*(2-len(str(_sum)))}"
+	def _random(self, args: list[str]) -> None:
+		try:
+			_keyPressed = [ False ]
+			_matrix = self._new(args)
+			input("Press key to start ...")
 
-		if(len(matrix) > 2):
-			output[-3] += f"{_}Points : {values}"
-			output[-2] += f"{_}Cells  : {cells}"
-			output[-1] += f"{_}Filled : {_fill}{' '*(3-len(_fill))} %"
+			_execs = (
+				lambda x:self.__addRandomPoint(x),
+				lambda x:self.__removeRandomPoint(x)
+			)
 
-		if(stats):
-			output[0] += f"{_}Iteration(s) : {stats['Iterations']}"
+			_hook = on_press(lambda e:self.__onKeyPress(_keyPressed))
 
-		print(f"\n".join(output))
+			_iterations = int(args[2] if(len(args) == 3) else 3)
+			for i in range(0, _iterations):
+				_stats = {
+					"Iterations": f"{i+1}/{_iterations}"
+				}
+
+				while(sum([ value for x in _matrix for value in x ]) != (len(_matrix)*len(_matrix[0]), 0)[i%2]):
+					shell(CMD_CLEAR)
+					_matrix = _execs[i%2](_matrix)
+					self.__displayMatrix(_matrix, _stats)
+
+					if(_keyPressed[0]):
+						_keyPressed[0] = False
+
+						if(is_pressed("space")):
+							print(f" [ {Colors.yellow}PAUSED{Colors.end} ] ")
+							input("Press enter to continue ...")
+
+						if(is_pressed("esc")):
+							raise(KeyboardInterrupt)
+
+					sleep(self.__sleep)
+
+			print(f" [ {Colors.green}FINISHED{Colors.end} ] ")
+
+		except(KeyboardInterrupt):
+			print(f" [ {Colors.red}STOPPED{Colors.end} ] ")
+
+		except(Exception):
+			print(format_exc())
+
+		_hook()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from os import listdir
+from os import listdir, mkdir
 from os.path import abspath, basename, isdir
 from shutil import rmtree
 from sys import argv
@@ -12,7 +12,8 @@ LIBS_REGISTRY = list[str]([
 	"wslbuilder"
 ])
 
-EXTRACT_PATH = abspath("libs/")
+LIBS_PATH		= abspath("libs/")
+EXTRACT_PATH	= abspath(f"{LIBS_PATH}/unpacked/")
 
 def ask(msg: str = "Are you sure ?") -> bool:
 	return(bool((input(f"{msg} [y/N] ").lower() or "n") == "y"))
@@ -26,9 +27,15 @@ def clearLibs(paths: list[str]) -> None:
 			pass
 
 def install(registry: list[str]) -> bool:
-	__rarPaths		= [ abspath(f"{EXTRACT_PATH}/{m}.rar") for m in registry ]
-	__libsPath		= [ abspath(f"{EXTRACT_PATH}/{m}") for m in registry ]
+	try:
+		mkdir(EXTRACT_PATH)
+
+	except(FileExistsError):
+		pass
+
 	__checkExists	= [ lib for lib in listdir(EXTRACT_PATH) if isdir(abspath(f"{EXTRACT_PATH}/{lib}")) if lib in registry ]
+	__extractsPath	= [ abspath(f"{EXTRACT_PATH}/{m}") for m in registry ]
+	__rarPaths		= [ abspath(f"{LIBS_PATH}/{m}.rar") for m in registry ]
 
 	if(len(__checkExists)):
 		for ce in __checkExists:
@@ -39,7 +46,7 @@ def install(registry: list[str]) -> bool:
 			return(False)
 
 		print("[ INFO ]: Clearing installation ...")
-		clearLibs(__libsPath)
+		clearLibs(__extractsPath)
 		print("[ INFO ]: Installation cleared !")
 
 	for i, rp in enumerate(__rarPaths):
@@ -54,7 +61,7 @@ def install(registry: list[str]) -> bool:
 			pass
 
 		except(Exception) as e:
-			clearLibs(__libsPath)
+			clearLibs(__extractsPath)
 			print(f"\n[ ERROR ]: {e}{' '*(16+len(rp))}")
 			return(False)
 
@@ -62,8 +69,8 @@ def install(registry: list[str]) -> bool:
 	return(True)
 
 def uninstall(registry: list[str]) -> bool:
-	__libsPath		= [ abspath(f"{EXTRACT_PATH}/{m}") for m in registry ]
 	__checkExists	= [ lib for lib in listdir(EXTRACT_PATH) if isdir(abspath(f"{EXTRACT_PATH}/{lib}")) if lib in registry ]
+	__libsPath		= [ abspath(f"{EXTRACT_PATH}/{m}") for m in registry ]
 
 	if(len(__checkExists)):
 		for ce in __checkExists:
@@ -106,7 +113,7 @@ def arg() -> bool:
 		elif(argv[1] in __args["prefix"][2][0]): # -r, --registry
 			print("[ INFO ]: Listing the package registry:")
 			for i, lib in enumerate(LIBS_REGISTRY, 1):
-				print(f" {' '*(3-len(str(i)))}{i}. {lib} -> {abspath(f'{EXTRACT_PATH}/{lib}.rar')}")
+				print(f" {' '*(3-len(str(i)))}{i}. {lib} -> {abspath(f'{LIBS_PATH}/{lib}.rar')}")
 		
 		elif(argv[1] in __args["prefix"][3][0]): # -u, --uninstall
 			uninstall([ argv[2] ])

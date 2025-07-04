@@ -61,7 +61,7 @@ class WslBuilder(Tool):
 		]
 
 		super().__init__()
-		self._run(args)
+		self._run(args, lambda:self._helper())
 
 	def __checkActiveDistro(self, distroname: str) -> bool:
 		__distroPath = abspath(f"{self.__path}/{distroname}")
@@ -174,7 +174,7 @@ class WslBuilder(Tool):
 			print(f"{Icons.tips}Make sure you have {__distroName} in {self.__path} with {__distroName}.tar inside")
 
 	def _init(self) -> None:
-		__libspath = abspath(f"{self.__path}/../libs/wslbuilder")
+		__libspath = abspath(f"{self.__path}/../libs/unpacked/wslbuilder")
 
 		try:
 			if(not isdir(__libspath)):
