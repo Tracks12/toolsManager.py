@@ -101,12 +101,10 @@ def arg(cfg: Config) -> bool:
 			print("\n".join([ f" {t}" for t in __table ]))
 
 		elif(argv[1] in __args["prefix"][-2][0]): # -D, --debug
-			__isLinux = bool(system() == "Linux")
-
 			while(True):
 				shell(CMD_CLEAR)
 				print(f"{Icons.info}Lanched in debug mod")
-				shell(f"{CMD_PYTHON} main.py")
+				shell("sh debug.sh")
 				input(f"{Icons.info}Press any keys to continue...")
 
 		elif(argv[1] in __args["prefix"][-1][0]): # -v, --version

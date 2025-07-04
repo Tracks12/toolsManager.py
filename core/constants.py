@@ -13,9 +13,11 @@ r""" Constants package for `core`.
 	- INFO: Contains application information such as version, git commit hash, and other metadata.
 	- REGEX_ARGS: A regular expression pattern used to parse and split argument strings into lists.
 	- UNITS: Units of measurement for bytes, including b, Kb, Mb, Gb, Tb, etc., to facilitate size conversions.
+	- DEBUG: Flag to enable verbose output during tool discovery.
 
 """
 
+from os import getenv
 from os.path import abspath
 from platform import system
 
@@ -33,7 +35,7 @@ CMD_CLEAR = "clear" if(__isLinux) else "cls"
 """ Command to clear the terminal screen, platform-dependent
 """
 
-CMD_PYTHON = f"python{'3' if(__isLinux) else ''}"
+CMD_PYTHON = str(f"python{'3' if(__isLinux) else ''}")
 """ Command to run Python scripts, platform-dependent
 """
 
@@ -60,4 +62,8 @@ REGEX_ARGS = str("\\s(?=(?:[^\"'`]*[\"'`][^\"'`]*[\"'`])*[^\"'`]*$)")
 
 UNITS = tuple[str](("b", "Kb", "Mb", "Gb", "Tb"))
 """ Units of measurement for bytes, including b, Kb, Mb, Gb, Tb, etc., to facilitate size conversions
+"""
+
+DEBUG = bool(getenv("TM_DEBUG", "0") == "1")
+""" Flag to enable verbose output during tool discovery
 """
