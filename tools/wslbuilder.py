@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-r""" Docker image management for WSL.
+r""" WSLBuilder - Docker image management for Windows Subsystem for Linux (WSL).
 
-	This module allows for the creation and management of Docker images compatible with Windows
-	Subsystem for Linux (WSL). It facilitates the customization and integration of Docker images
-	into a WSL environment, simplifying application deployment within this environment.
+	This module provides a `Tool` for managing Docker images and WSL distributions.
+	It allows you to pull Docker images, convert them into WSL distributions, export them,
+	and manage their lifecycle (create, delete, export, list, inspect, and launch).
+
+	Features:
+	- Pull Docker images and transform them into custom WSL distributions.
+	- Initialize a WSL environment with Docker support.
+	- Export WSL distributions to `.tar` archives.
+	- List all distributions, show stats, and remove them cleanly.
+	- Integrate easily in an automated toolchain with your tools manager.
 
 	Note:
-		Don't forget to run `$ python setup.py` to install wslbuilder dependencies, you can ignore the installation if you have a default wsl instance with a running docker daemon
+		Run `$ python setup.py` to unpack dependencies required by WSLBuilder.
+		You can skip this step if you already have a default WSL instance with Docker running.
 
 """
 
@@ -28,6 +36,33 @@ from core.tool import Tool
 DISTRONAME_REGEX = str("(\\s)|([/:])")
 
 class WslBuilder(Tool):
+
+	""" Tool to manage custom WSL distributions built from Docker images.
+
+		WSLBuilder helps you automate the process of:
+		- Pulling Docker images and converting them to WSL distros.
+		- Managing distros (create, delete, export, list, stats, start).
+		- Initializing a workspace for custom WSL builds.
+		- Ensuring Docker daemon runs inside WSL when needed.
+
+		Commands:
+		- `-n, --new`: Create a new WSL distro from a Docker image.
+		- `-d, --delete`: Delete a WSL distro (with optional force flag).
+		- `-D, --full-delete`: Delete a distro and clean up Docker containers/images.
+		- `-e, --export`: Export a WSL distro to a `.tar` archive.
+		- `-i, --install`: Import/install a WSL distro from a `.tar`.
+		- `-I, --init`: Initialize the builder environment with Docker.
+		- `-l, --list`: List all existing distros in the workspace.
+		- `-S, --stat`: Show detailed stats about a distro.
+		- `-s, --start`: Launch a WSL instance of a distro.
+
+		Example:
+			`~$ wslbuilder --new ubuntu:latest`
+			`~$ wslbuilder --list`
+			`~$ wslbuilder --export mydistro`
+
+	"""
+
 	command	= (("wslbuilder", "wb"), "(wb)wslbuilder")
 	name	= "WSLBuilder"
 	path	= __file__
@@ -65,6 +100,16 @@ class WslBuilder(Tool):
 		self._run(args, lambda:self._helper())
 
 	def __checkActiveDistro(self, distroname: str) -> bool:
+		"""Check if a WSL distribution has an active disk (ext4.vhdx).
+
+			Args:
+				distroname (str): The name of the distribution to check.
+
+			Returns:
+				bool: True if active, False otherwise.
+
+		"""
+
 		__distroPath = abspath(f"{self.__path}/{distroname}")
 		__distroRepo = listdir(__distroPath)
 
@@ -75,9 +120,28 @@ class WslBuilder(Tool):
 		return(False)
 
 	def __checkDockerStatus(self) -> bool:
+		"""Check if the Docker daemon is running inside WSL.
+
+			Returns:
+				bool: True if running, False otherwise.
+
+		"""
+
 		return(bool(shell(f"wsl service docker status")))
 
 	def __checkExistDistro(self, distroName: str) -> bool:
+		"""Check if a given WSL distribution exists in the workspace.
+
+			Verifies if the specified distro directory is present.
+
+			Args:
+				distroName (str): The name of the distribution to check.
+
+			Returns:
+				bool: True if the distribution exists, False otherwise.
+
+		"""
+
 		__distros = listdir(self.__path)
 
 		if(distroName in __distros):
@@ -87,6 +151,13 @@ class WslBuilder(Tool):
 		return(False)
 
 	def __setup(self) -> None:
+		""" Ensure the workspace directory exists for storing WSL distributions.
+
+			Creates the workspace path if it does not exist.
+			Prints informative messages depending on the outcome.
+
+		"""
+
 		try:
 			mkdir(self.__path)
 			print(f"{Icons.info}Create path workspace for {self.name} tool at {self.__path}")
@@ -101,6 +172,22 @@ class WslBuilder(Tool):
 			print(f"{Icons.err}An error occurred: {e}")
 
 	def _new(self, args: list[str]) -> None:
+		""" Create a new WSL distribution from a Docker image.
+
+			Steps:
+			1. Pull the specified Docker image.
+			2. Export the container as a `.tar` archive.
+			3. Import it as a new WSL distribution.
+			4. Optionally start it immediately.
+
+			Args:
+				args (list[str]): A list containing the Docker image name/tag (e.g., 'ubuntu:latest').
+
+			Raises:
+				Exception: If Docker is not running or the image is not found.
+
+		"""
+
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
@@ -128,6 +215,18 @@ class WslBuilder(Tool):
 			rmdir(__distroPath)
 
 	def _delete(self, args: list[str]) -> None:
+		""" Remove a WSL distribution and its associated files.
+
+			Steps:
+			- Unregister the WSL distro.
+			- Remove the `.tar` archive.
+			- Remove the distro workspace directory.
+
+			Args:
+				args (list[str]): A list with the distro name to delete. Use '-f' to force without confirmation.
+
+		"""
+
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
@@ -138,6 +237,17 @@ class WslBuilder(Tool):
 				rmdir(f"{__distroPath}")
 
 	def _fullDelete(self, args: list[str]) -> None:
+		""" Remove a WSL distribution and clean up related Docker resources.
+
+			Steps:
+			- Remove the Docker container and image.
+			- Delete the WSL distribution and its files.
+
+			Args:
+				args (list[str]): A list with the distro name to delete. Use '-f' to force.
+
+		"""
+
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
 		if(("-f" in args) or self.ask(f"Confirm the deletion of {args[0]} ?")):
@@ -147,6 +257,15 @@ class WslBuilder(Tool):
 			self._delete(args[:] + ["-f"])
 
 	def _export(self, args: list[str]) -> None:
+		""" Export an existing WSL distribution to a `.tar` archive.
+
+			This allows you to back up or share the distribution.
+
+			Args:
+				args (list[str]): A list with the distro name to export.
+
+		"""
+
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
@@ -157,6 +276,18 @@ class WslBuilder(Tool):
 			shell(f"wsl --export {__distroName} {__distroPath}/{__distroName}.tar")
 
 	def _install(self, args: list[str]) -> None:
+		""" Import and install a WSL distribution from a `.tar` archive.
+
+			If the distro is inactive, it re-imports it using its archive.
+
+			Args:
+				args (list[str]): A list with the distro name to install.
+
+			Raises:
+				FileNotFoundError: If the `.tar` archive or distro directory is missing.
+
+		"""
+
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 		__distroPath = abspath(f"{self.__path}/{__distroName}")
 
@@ -175,6 +306,17 @@ class WslBuilder(Tool):
 			print(f"{Icons.tips}Make sure you have {__distroName} in {self.__path} with {__distroName}.tar inside")
 
 	def _init(self) -> None:
+		""" Initialize a WSLBuilder environment with Docker support.
+
+			- Imports the base builder instance into WSL.
+			- Installs Docker and required services.
+			- Starts Docker if not running.
+
+			Notes:
+				Make sure `setup.py` has unpacked the required files.
+
+		"""
+
 		__libspath = abspath(f"{EXTRACT_PATH}/wslbuilder")
 
 		try:
@@ -196,6 +338,16 @@ class WslBuilder(Tool):
 			print(f'{Icons.tips}Don\'t forget to run "python setup.py" to unpack the libs')
 
 	def _list(self) -> None:
+		""" List all WSL distributions managed in the workspace.
+
+			Shows:
+			- Distro name
+			- Size
+			- Path
+			- Active/inactive status
+
+		"""
+
 		__distros = listdir(self.__path)
 
 		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Size{' '*(12-len('Size'))}Path" ])
@@ -217,6 +369,19 @@ class WslBuilder(Tool):
 		print(f"\n{_}")
 
 	def _stat(self, args: list[str]) -> None:
+		""" Show detailed stats about a specific WSL distribution.
+
+			Displays:
+			- Name
+			- Path
+			- Image size
+			- Disk size (if active)
+
+			Args:
+				args (list[str]): A list with the distro name to inspect.
+
+		"""
+
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
 		if(self.__checkExistDistro(__distroName)):
@@ -245,6 +410,13 @@ class WslBuilder(Tool):
 			print(f"\n{_}")
 
 	def _start(self, args: list[str]) -> None:
+		""" Launch a WSL instance for the specified distribution.
+
+			Args:
+				args (list[str]): A list with the distro name to start.
+
+		"""
+
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
 
 		if(
