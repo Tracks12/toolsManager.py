@@ -119,14 +119,14 @@ def arg() -> bool:
 		elif(argv[1] in __args["prefix"][-1][0]): # -h, --help
 			__table = list[str]([
 				f"Usage: python {basename(__file__)} <argument>\n",
-				f"Arguments:{' '*(34-len('Arguments:'))}Descriptions:"
+				f"{'Arguments':<{24}}Descriptions:"
 			])
 
 			for i, arg in enumerate(__args["prefix"]):
 				__left = f"{arg[0][0]}, {arg[0][1]} {arg[1]}"
 				__desc = f"\n{' '*35}* ".join(__args['desc'][i]) if(isinstance(__args['desc'][i], tuple)) else __args['desc'][i]
 				__table.append("".join([
-					f"{__left}{' '*(34-len(__left))}{__desc}",
+					f"{__left:<{24}}{__desc}",
 					"\n"*(1 if(i in (len(__args['desc'])-2, len(__args['desc'])-1)) else 0)
 				]))
 
