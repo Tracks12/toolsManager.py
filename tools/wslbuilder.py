@@ -14,6 +14,9 @@ r""" WSLBuilder - Docker image management for Windows Subsystem for Linux (WSL).
 	- List all distributions, show stats, and remove them cleanly.
 	- Integrate easily in an automated toolchain with your tools manager.
 
+	Projects are saved in a dedicated workspace directory:
+		<workspace_root>/WSLBuilder/<image_name>/
+
 	Note:
 		Run `$ python setup.py` to unpack dependencies required by WSLBuilder.
 		You can skip this step if you already have a default WSL instance with Docker running.

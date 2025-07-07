@@ -1,6 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+""" Shell Tool - Shell Command Scheduler and Executor
+
+	This tool provides an interface to execute shell commands and manage
+	schedules of shell commands that can be saved, listed, deleted, and run.
+
+	Features:
+	- Execute arbitrary shell commands directly from Python.
+	- Create schedules of multiple shell commands stored as JSON files.
+	- List all saved schedules in a workspace directory.
+	- Delete schedules with confirmation or forced option.
+	- Run saved schedules sequentially with optional pauses between commands.
+
+	Schedules are saved in a dedicated workspace directory:
+		<workspace_root>/Shell/Schedules/
+
+	Example:
+		$ shell --new-schedule mytasks
+		$ shell --list-schedule
+		$ shell --run-schedule mytasks -p
+
+"""
+
 # tools/shell.py
 
 from json import dump, load
@@ -17,6 +39,28 @@ from core.tool import Tool
 SCHEDULENAME_REGEX = str("(\\s)|([/:])")
 
 class Shell(Tool):
+	""" Tool to manage shell command schedules and execute shell commands from Python.
+
+		Shell allows you to:
+		- Execute arbitrary shell commands.
+		- Create, list, delete, and run schedules of commands stored as JSON files.
+		- Manage schedules in a dedicated workspace folder.
+		- Optionally pause between commands when running a schedule.
+
+		Commands:
+		- `-c, --command`: Run a single shell command.
+		- `-n, --new-schedule`: Create a new schedule of shell commands.
+		- `-l, --list-schedule`: List all saved schedules.
+		- `-d, --delete-schedule`: Delete an existing schedule.
+		- `-r, --run-schedule`: Run a saved schedule, optionally pausing between commands.
+
+		Example:
+			`~$ shell --new-schedule mytasks`
+			`~$ shell --list-schedule`
+			`~$ shell --run-schedule mytasks -p`
+
+	"""
+
 	command	= (("shell", "sh"), "(sh)ell")
 	name	= "Shell"
 	path	= __file__
@@ -48,6 +92,17 @@ class Shell(Tool):
 		self._run(args, lambda:self._command(args[1: len(args)]))
 
 	def __checkExistSchedule(self, scheduleName: str) -> bool:
+		""" Checks if a schedule with the given name exists in the workspace's schedules directory.
+			The schedule name is normalized by removing spaces and replacing special characters with hyphens.
+
+			Args:
+				scheduleName (str): Name of the schedule to check.
+
+			Returns:
+				bool: True if the schedule exists, False otherwise.
+
+		"""
+
 		__schedules = [ s.split(".")[0] for s in listdir(self.__schedulesPath) ]
 
 		if(scheduleName in __schedules):
@@ -57,6 +112,13 @@ class Shell(Tool):
 		return(False)
 
 	def __setup(self) -> None:
+		""" Setup the workspace directories for Shell tool.
+
+			Creates the main workspace folder and the Schedules subfolder.
+			Handles exceptions and prints status messages.
+
+		"""
+
 		try:
 			mkdir(self.__path)
 			mkdir(self.__schedulesPath)
@@ -75,6 +137,16 @@ class Shell(Tool):
 		shell(" ".join(args))
 
 	def _deleteSchedule(self, args: list[str]) -> None:
+		""" Delete a saved schedule from the workspace.
+
+			Args:
+				args (list[str]): Arguments containing the schedule name and optional flags.
+
+			Raises:
+				FileNotFoundError: If the schedule does not exist.
+
+		"""
+
 		try:
 			__scheduleName = re.sub(SCHEDULENAME_REGEX, "-", args[0])
 
@@ -89,6 +161,12 @@ class Shell(Tool):
 			print(f"{Icons.warn}{e}")
 
 	def _listSchedule(self) -> None:
+		""" List all saved schedules in the workspace.
+
+			Prints a formatted table of schedule names and their paths.
+
+		"""
+
 		__schedules = listdir(self.__schedulesPath)
 
 		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Path" ])
@@ -103,6 +181,17 @@ class Shell(Tool):
 		print(f"\n{_}")
 
 	def _newSchedule(self, args: list[str]) -> None:
+		""" Create a new schedule by interactively entering commands.
+
+			Args:
+				args (list[str]): Arguments containing the schedule name.
+
+			Raises:
+				FileExistsError: If the schedule already exists.
+				IndexError: If no schedule name was provided.
+
+		"""
+
 		try:
 			__scheduleName = re.sub(SCHEDULENAME_REGEX, "-", args[0])
 			__schedules = list[str]([])
@@ -134,6 +223,18 @@ class Shell(Tool):
 			print(f"{Icons.warn}{e}")
 
 	def _runSchedule(self, args: list[str]) -> None:
+		""" Run a saved schedule of commands sequentially.
+
+			Args:
+				args (list[str]): Arguments containing the schedule name and optional flags.
+
+			Behavior:
+			- Loads the schedule commands from JSON file.
+			- Runs each command in order.
+			- If `-p` flag is given, pauses between commands waiting for user input.
+
+		"""
+
 		__scheduleName = re.sub(SCHEDULENAME_REGEX, "-", args[0])
 
 		if(self.__checkExistSchedule(__scheduleName)):

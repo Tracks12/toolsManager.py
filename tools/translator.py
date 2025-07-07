@@ -15,6 +15,9 @@ r""" Translator - CSV to multilingual JSON translation manager.
 	- Delete or list existing projects in the workspace.
 	- Integrate easily with web or desktop applications to load regions dynamically.
 
+	Projects are saved in a dedicated workspace directory:
+		<workspace_root>/Translator/<project_name>/
+
 	Note:
 		Each project is stored in a dedicated workspace folder.
 		Use `$ python translator.py --help` for usage examples.
