@@ -93,18 +93,27 @@ class Translator(Tool):
 			for region in __regions:
 				if(args[1] in region):
 					__regionPath = abspath(f"{__projectPath}/{region}")
-					print(f"{Icons.info}Viewing {__regionPath} file ...")
+					print(f"{Icons.info}Checking {__regionPath} file ...")
 
 					with open(__regionPath, "r", encoding=self.__cfg.getEncoding()) as json:
 						__translations = load(json)
 
 					try:
 						if(any(a in ("-s", "--search") for a in args)):
-							print(f" {args[3]} : {__translations[args[3]]}")
+							print(f"{Icons.info}Label matching with {args[3]} in {__regionPath} ...")
+							__results = [ t for t in __translations if args[3] in t ]
+
+							if(len(__results)):
+								for r in __results:
+									print(f" {r}{' '*(30-len(r))}: {__translations[r]}")
+							
+							else:
+								print(f"{Icons.warn}No label matching")
+
 							return
 
-						for t in __translations:
-							print(f" {t}{' '*(30-len(t))}: {__translations[t]}")
+						for r in __translations:
+							print(f" {r}{' '*(30-len(r))}: {__translations[r]}")
 
 					except(IndexError):
 						print(f"{Icons.warn}No label was specified !")

@@ -37,13 +37,13 @@ def launch(tool: Tool, args: list[str]) -> bool:
 	try:
 		print(f'{Icons.play}Starting "{tool.name}" ...')
 		tool(args)
+		print(end="\n")
+		return(True)
 
 	except(Exception):
-		print(f"{Icons.err}{format_exc()}")
+		print(f"{Icons.err}{format_exc()}", end="\n"*2)
 
-	finally:
-		print()
-		return(True)
+	return(False)
 
 def sortTools(tools: list[Tool]) -> list[Tool]:
 	table = list[str]([ f" *  Name{' '*(14-len('Name'))}Version{' '*(9-len('Version'))}Command{' '*(16-len('Command'))}Path" ])

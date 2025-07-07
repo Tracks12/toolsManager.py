@@ -37,9 +37,9 @@ class Tool:
 
 		Usage:
 			Subclass must:
-				- Populate `_args` with argument patterns
-				- Populate `_execs` with corresponding execution functions
-				- Call `_run(args)` in the constructor
+			- Populate `_args` with argument patterns
+			- Populate `_execs` with corresponding execution functions
+			- Call `_run(args)` in the constructor
 
 	"""
 

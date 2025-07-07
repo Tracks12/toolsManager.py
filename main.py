@@ -32,7 +32,7 @@ except(RuntimeError) as e:
 
 except(ModuleNotFoundError) as e:
 	print("[ ERROR ]: " + e.msg)
-	print(' (?) - Try to run "pip install -r requirements.txt" to install dependencies')
+	print(f' (?) - Try to run "pip install -r requirements.txt" or "pip install {e.name}" to install missing dependencies')
 	exit()
 
 def arg(cfg: Config) -> bool:
