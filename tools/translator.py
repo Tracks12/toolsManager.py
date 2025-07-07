@@ -1,6 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+r""" Translator - CSV to multilingual JSON translation manager.
+
+	This module provides a `Tool` for managing translation projects.
+	It allows you to create translation workspaces from CSV files, 
+	transform them into JSON locale files, check translations, 
+	and manage their lifecycle (create, translate, list, check, delete).
+
+	Features:
+	- Create new translation projects with default or remote CSV sources.
+	- Parse CSV files and generate well-structured JSON region files.
+	- Check all translations by locale or search for specific labels.
+	- Delete or list existing projects in the workspace.
+	- Integrate easily with web or desktop applications to load regions dynamically.
+
+	Note:
+		Each project is stored in a dedicated workspace folder.
+		Use `$ python translator.py --help` for usage examples.
+
+"""
+
 # tools/translator.py
 
 from csv import DictReader, DictWriter
@@ -18,7 +38,28 @@ from core.icons import Icons
 from core.tool import Tool
 
 class Translator(Tool):
-	""" Say hello to the user
+
+	""" Tool to manage multilingual translation projects from CSV files.
+
+		Translator helps you automate the process of:
+		- Creating translation projects with a CSV source.
+		- Importing remote CSV files (e.g., Google Sheets export).
+		- Generating JSON locale region files for web/desktop apps.
+		- Checking translations by project and locale, with search.
+		- Managing projects easily (create, delete, list, translate).
+
+		Commands:
+		- `-n, --new`: Create a new translation project (optionally from remote CSV).
+		- `-t, --translate`: Parse CSV and generate JSON locale files.
+		- `-c, --check`: Check translations for a project and locale (search labels).
+		- `-l, --list`: List all translation projects in the workspace.
+		- `-d, --delete`: Delete a project (with optional force flag).
+
+		Example:
+			`~$ translator --new myproject`
+			`~$ translator --translate myproject`
+			`~$ translator --check myproject en`
+
 	"""
 
 	command	= (("translator", "tr"), "(tr)anslator")
@@ -51,6 +92,16 @@ class Translator(Tool):
 		self._run(args, lambda:self._helper())
 
 	def __checkExistProject(self, distroName: str) -> bool:
+		""" Checks if a translation project exists in the workspace.
+
+			Args:
+				distroName (str): The name of the project to check.
+
+			Returns:
+				bool: True if the project exists, False otherwise.
+
+		"""
+
 		__distros = listdir(self.__path)
 
 		if(distroName in __distros):
@@ -59,6 +110,12 @@ class Translator(Tool):
 		return(False)
 
 	def __setup(self) -> None:
+		""" Sets up the translator workspace by creating the directory if it does not exist.
+
+			Prints an informational or error message depending on the outcome.
+
+		"""
+
 		try:
 			mkdir(self.__path)
 			print(f"{Icons.info}Create path workspace for {self.name} tool at {self.__path}")
@@ -73,6 +130,22 @@ class Translator(Tool):
 			print(f"{Icons.err}An error occurred: {e}")
 
 	def _check(self, args: list[str]) -> None:
+		""" Displays the translations of a project for a given locale, with optional label search.
+
+			Args:
+				args (list[str]): Expected arguments:
+					- args[0]: project name
+					- args[1]: locale code (optional)
+					- additional options (e.g., -s to search for a specific label)
+
+			Features:
+			- Lists available locales if no locale is specified.
+			- Shows all translations for the specified locale.
+			- Searches and displays translations containing a given label.
+			- Handles errors gracefully, such as project not found or locale not available.
+
+		"""
+
 		try:
 			if(not self.__checkExistProject(args[0])):
 				raise(FileNotFoundError("Project doesn't exist on workspace"))
@@ -132,6 +205,17 @@ class Translator(Tool):
 			print(f"{Icons.warn}No project wasn't specified !")
 
 	def _delete(self, args: list[str]) -> None:
+		""" Deletes a translation project from the workspace.
+
+			Args:
+				args (list[str]): Expected arguments:
+					- args[0]: name of the project to delete
+					- additional options (e.g., -f to force deletion without confirmation)
+
+			Asks for confirmation before deletion unless forced.
+
+		"""
+
 		try:
 			if(not self.__checkExistProject(args[0])):
 				raise(FileNotFoundError("Project doesn't exist on workspace"))
@@ -144,6 +228,15 @@ class Translator(Tool):
 			print(f"{Icons.warn}{e}")
 
 	def _list(self) -> None:
+		""" Lists all translation projects present in the workspace.
+
+			Displays for each project:
+			- Its name
+			- The number of locale JSON files
+			- The full path of the project
+
+		"""
+
 		__projects = listdir(self.__path)
 
 		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Region(s){' '*(12-len('Region(s)'))}Path" ])
@@ -161,6 +254,21 @@ class Translator(Tool):
 		print(f"\n{_}")
 
 	def _new(self, args: list[str]) -> None:
+		""" Creates a new translation project in the workspace.
+
+			Args:
+				args (list[str]): Expected arguments:
+					- args[0]: name of the new project
+					- additional options (e.g., -r followed by a URL to import a remote CSV)
+
+			Features:
+			- Creates the project folder.
+			- Downloads a CSV file from a URL if requested.
+			- Creates a default CSV if no external source is provided.
+			- Offers to launch the JSON files generation after import.
+
+		"""
+
 		try:
 			if(self.__checkExistProject(args[0])):
 				raise(FileExistsError(f'Project "{args[0]}" already exist in {self.__path}'))
@@ -223,6 +331,19 @@ class Translator(Tool):
 			self._delete(args)
 
 	def _translate(self, args: list[str]) -> None:
+		""" Generates locale JSON files from a project's CSV file.
+
+			Args:
+				args (list[str]): Expected arguments:
+					- args[0]: name of the project to translate
+
+			Workflow:
+			- Reads the project's CSV file.
+			- For each locale column (except 'label'), creates a JSON file with translations.
+			- Displays progress and any errors encountered.
+
+		"""
+
 		try:
 			if(not self.__checkExistProject(args[0])):
 				raise(FileNotFoundError("Project doesn't exist on workspace"))

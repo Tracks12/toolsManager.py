@@ -225,6 +225,8 @@ class WslBuilder(Tool):
 			Args:
 				args (list[str]): A list with the distro name to delete. Use '-f' to force without confirmation.
 
+			Asks for confirmation before deletion unless forced.
+
 		"""
 
 		__distroName = re.sub(DISTRONAME_REGEX, "-", args[0])
@@ -245,6 +247,8 @@ class WslBuilder(Tool):
 
 			Args:
 				args (list[str]): A list with the distro name to delete. Use '-f' to force.
+
+			Asks for confirmation before deletion unless forced.
 
 		"""
 
