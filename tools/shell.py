@@ -169,12 +169,12 @@ class Shell(Tool):
 
 		__schedules = listdir(self.__schedulesPath)
 
-		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Path" ])
+		table = list[str]([ f" *  {'Name':<{18}}Path" ])
 		for i, schedule in enumerate(__schedules, start=1):
 			table.append("".join([
-				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}.",
-				f"{' '*1}{Colors.cyan}{schedule.replace('-', ':').split('.')[0]}{Colors.end}",
-				f"{' '*(18-len(schedule.split('.')[0]))}{Colors.yellow}{abspath(f'{self.__schedulesPath}/{schedule}')}{Colors.end}"
+				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. ",
+				f"{Colors.cyan}{schedule.replace('-', ':').split('.')[0]:<{18}}{Colors.end}",
+				f"{Colors.yellow}{abspath(f'{self.__schedulesPath}/{schedule}')}{Colors.end}"
 			]))
 
 		_ = "\n".join([ f' {t}' for t in table ])

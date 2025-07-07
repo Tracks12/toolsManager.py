@@ -8,7 +8,7 @@ from subprocess import check_output as prompt
 from core.tool import Tool
 
 class Wifi(Tool):
-	""" Say hello to the user
+	""" Wifi tool to retrieve saved wifi passwords
 	"""
 
 	command	= (("wifi", "wi"), "(wi)fi")
@@ -43,7 +43,7 @@ class Wifi(Tool):
 			try:
 				__table.append(f"{' '*_m}{i}. {wifi:<{_s}}{__password[0]}")
 
-			except Exception:
+			except(Exception):
 				__table.append(f"{' '*_m}{i}. {wifi:<{_s}}-")
 
 		print("\n".join(__table))

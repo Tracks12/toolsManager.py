@@ -357,7 +357,7 @@ class WslBuilder(Tool):
 
 		__distros = listdir(self.__path)
 
-		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Size{' '*(12-len('Size'))}Path" ])
+		table = list[str]([ f" *  {'Name':<{18}}{'Size':<{12}}Path" ])
 		for i, distro in enumerate(__distros, start=1):
 			try:
 				size = stringSize(getsize(abspath(f"{self.__path}/{distro}/ext4.vhdx")))
@@ -366,10 +366,10 @@ class WslBuilder(Tool):
 				size = f"INACTIVE"
 
 			table.append("".join([
-				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}.",
-				f"{' '*1}{Colors.cyan}{distro.replace('-', ':')}{Colors.end}",
-				f"{' '*(18-len(distro))}{Colors.red if(size == 'INACTIVE') else Colors.purple}{size}{Colors.end}",
-				f"{' '*(12-len(size))}{Colors.yellow}{abspath(f'{self.__path}/{distro}')}{Colors.end}"
+				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. ",
+				f"{Colors.cyan}{distro.replace('-', ':'):<{18}}{Colors.end}",
+				f"{Colors.red if(size == 'INACTIVE') else Colors.purple}{size:<{12}}{Colors.end}",
+				f"{Colors.yellow}{abspath(f'{self.__path}/{distro}')}{Colors.end}"
 			]))
 
 		_ = "\n".join([ f' {t}' for t in table ])
@@ -398,9 +398,9 @@ class WslBuilder(Tool):
 			__distroImageSize	= stringSize(getsize(__distroImagePath))
 
 			table = list[str]([
-				f"* Name{' '*(8-len('Name'))}: {Colors.cyan}{args[0]}{Colors.end}",
-				f"* Path{' '*(8-len('Path'))}: {Colors.yellow}{__distroPath}{Colors.end}",
-				f"* Image{' '*(8-len('Image'))}: [ {Colors.purple}{__distroImageSize}{Colors.end} ] {__distroImageName}"
+				f"{'Name':<{8}}: {Colors.cyan}{args[0]}{Colors.end}",
+				f"{'Path':<{8}}: {Colors.yellow}{__distroPath}{Colors.end}",
+				f"{'Image':<{8}}: [ {Colors.purple}{__distroImageSize}{Colors.end} ] {__distroImageName}"
 			])
 
 			if(self.__checkActiveDistro(__distroName)):
@@ -408,12 +408,12 @@ class WslBuilder(Tool):
 				__distroDiskPath	= abspath(f"{__distroPath}/{__distroDiskName}")
 				__distroDiskSize	= stringSize(getsize(__distroDiskPath))
 
-				table.append(f"* Disk{' '*(8-len('Disk'))}: [ {Colors.purple}{__distroDiskSize}{Colors.end} ] {__distroDiskName}")
+				table.append(f"{'Disk':<{8}}: [ {Colors.purple}{__distroDiskSize}{Colors.end} ] {__distroDiskName}")
 
 			else:
 				table[0] += f" [ {Colors.red}INACTIVE{Colors.end} ]"
 
-			_ = "\n".join([ f' {t}' for t in table ])
+			_ = "\n".join([ f' * {t}' for t in table ])
 			print(f"\n{_}")
 
 	def _start(self, args: list[str]) -> None:

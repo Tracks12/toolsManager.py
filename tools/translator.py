@@ -181,7 +181,7 @@ class Translator(Tool):
 
 							if(len(__results)):
 								for r in __results:
-									print(f" {r}{' '*(30-len(r))}: {__translations[r]}")
+									print(f" {r:<{30}}: {__translations[r]}")
 							
 							else:
 								print(f"{Icons.warn}No label matching")
@@ -189,7 +189,7 @@ class Translator(Tool):
 							return
 
 						for r in __translations:
-							print(f" {r}{' '*(30-len(r))}: {__translations[r]}")
+							print(f" {r:<{30}}: {__translations[r]}")
 
 					except(IndexError):
 						print(f"{Icons.warn}No label was specified !")
@@ -242,15 +242,15 @@ class Translator(Tool):
 
 		__projects = listdir(self.__path)
 
-		table = list[str]([ f" *  Name{' '*(18-len('Name'))}Region(s){' '*(12-len('Region(s)'))}Path" ])
+		table = list[str]([ f" *  {'Name':<{18}}{'Region(s)':<{12}}Path" ])
 		for i, project in enumerate(__projects, start=1):
 			__regions = [ r for r in listdir(abspath(f"{self.__path}/{project}")) if(".json" in r) ]
 
 			table.append("".join([
-				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}.",
-				f"{' '*1}{Colors.cyan}{project.replace('-', ':').split('.')[0]}{Colors.end}",
-				f"{' '*(18-len(project.split('.')[0]))}{Colors.purple}{len(__regions)}{Colors.end}",
-				f"{' '*(12-len(str(len(__regions))))}{Colors.yellow}{abspath(f'{self.__path}/{project}')}{Colors.end}"
+				f"{' '*(2-len(str(i)))}{Colors.green}{i}{Colors.end}. ",
+				f"{project.replace('-', ':').split('.')[0]:<{18}}{Colors.end}",
+				f"{Colors.purple}{str(len(__regions)):<{12}}{Colors.end}",
+				f"{Colors.yellow}{abspath(f'{self.__path}/{project}')}{Colors.end}"
 			]))
 
 		_ = "\n".join([ f' {t}' for t in table ])
