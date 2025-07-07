@@ -181,7 +181,7 @@ class Translator(Tool):
 
 							if(len(__results)):
 								for r in __results:
-									print(f" {r:<{30}}: {__translations[r]}")
+									print(f" {r:<{30}}: {Colors.cyan}{__translations[r]}{Colors.end}")
 							
 							else:
 								print(f"{Icons.warn}No label matching")
@@ -189,7 +189,7 @@ class Translator(Tool):
 							return
 
 						for r in __translations:
-							print(f" {r:<{30}}: {__translations[r]}")
+							print(f" {r:<{30}}: {Colors.cyan}{__translations[r]}{Colors.end}")
 
 					except(IndexError):
 						print(f"{Icons.warn}No label was specified !")
