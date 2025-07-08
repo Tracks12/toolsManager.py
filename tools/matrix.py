@@ -18,7 +18,7 @@ class Matrix(Tool):
 	command	= (("matrix", "mat"), "(mat)rix")
 	name	= "Matrix"
 	path	= __file__
-	version	= "0.2a"
+	version	= "0.3a"
 
 	__sleep = 0
 
@@ -69,17 +69,28 @@ class Matrix(Tool):
 		for i, row in enumerate(matrix):
 			_output.append("")
 			_sum = sum(row)
-			_output[i] += f" {row} = {Colors.red if(_sum < (len(matrix[0])/3)) else Colors.green}{_sum}{Colors.end}{' '*(2-len(str(_sum)))}"
+			_output[i] += f" [ {' '.join([ f'{Colors.cyan}{r}{Colors.end}' for r in row ])} ] = {Colors.red if(_sum < (len(matrix[0])/3)) else Colors.green}{_sum}{Colors.end}{' '*(2-len(str(_sum)))}"
 
-		if(len(matrix) > 2):
-			_output[-3] += f"{_}Points : {_values}"
-			_output[-2] += f"{_}Cells  : {_cells}"
-			_output[-1] += f"{_}Filled : {_fill}{' '*(3-len(_fill))} %"
+		if(len(matrix) > 3):
+			_output[-4] += f"{_}{'Dim':<{7}}: {len(matrix)}x{len(matrix[0])}"
+			_output[-3] += f"{_}{'Cells':<{7}}: {_cells}"
+			_output[-2] += f"{_}{'Points':<{7}}: {_values}"
+			_output[-1] += f"{_}{'Filled':<{7}}: {str(_fill):<{5}} %"
 
-		if(stats):
-			_output[0] += f"{_}Iteration(s) : {stats['Iterations']}"
+			if(stats):
+				_output[0] += f"{_}{'Iteration(s)':<{13}}: {stats['Iterations']}"
 
 		print(f"\n".join(_output))
+
+	def __label(self, text: str, dim: tuple[int] = (1, 1), color: Colors = "") -> None:
+		_higher = "\x1b[A"
+		_lower = "\x1b[B"
+
+		_ = str(' '*int((dim[1]+(dim[1]-1))/2))[int((len(text)-1)/2)-(1 if(len(text)%2) else 0):-1]
+
+		print(_higher*int(dim[0]/2), end="\r")
+		print(f" [ {_}{color}{text}{Colors.end}{_}{'' if(len(text)%2) else ' '} ] ")
+		print(_lower*int((dim[0]/2)-1), end="\r")
 
 	def __onKeyPress(self, keys: list[bool]) -> None:
 		keys[0] = True
@@ -115,44 +126,50 @@ class Matrix(Tool):
 		try:
 			_keyPressed = [ False ]
 			_matrix = self._new(args)
+			_dim = (len(_matrix), len(_matrix[0]))
 			input("Press key to start ...")
+			shell(CMD_CLEAR)
 
 			_execs = (
 				lambda x:self.__addRandomPoint(x),
 				lambda x:self.__removeRandomPoint(x)
 			)
 
+			_higher = "\x1b[A"
 			_hook = on_press(lambda e:self.__onKeyPress(_keyPressed))
 
 			_iterations = int(args[2] if(len(args) == 3) else 3)
 			for i in range(0, _iterations):
 				_stats = {
-					"Iterations": f"{i+1}/{_iterations}"
+					"Iterations": f"{i+1}/{_iterations}",
 				}
 
 				while(sum([ value for x in _matrix for value in x ]) != (len(_matrix)*len(_matrix[0]), 0)[i%2]):
 					_matrix = _execs[i%2](_matrix)
-					shell(CMD_CLEAR)
+					print(_higher*(len(_matrix)+1), end="\r")
 					self.__displayMatrix(_matrix, _stats)
 
 					if(_keyPressed[0]):
 						_keyPressed[0] = False
 
 						if(is_pressed("space")):
-							print(f" [ {Colors.yellow}PAUSED{Colors.end} ] ")
+							self.__label("PAUSED", _dim, Colors.yellow)
 							input("Press enter to continue ...")
+							shell(CMD_CLEAR)
 
 						if(is_pressed("esc")):
 							raise(KeyboardInterrupt)
 
 					sleep(self.__sleep)
 
-			print(f" [ {Colors.green}FINISHED{Colors.end} ] ")
+			self.__label("FINISHED", _dim, Colors.green)
 
 		except(KeyboardInterrupt):
-			print(f" [ {Colors.red}STOPPED{Colors.end} ] ")
+			self.__label("STOPPED", _dim, Colors.red)
 
 		except(Exception):
 			print(format_exc())
 
-		_hook()
+		finally:
+			if(_hook):
+				_hook()

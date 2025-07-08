@@ -5,20 +5,20 @@ A multi-tool with a generic template for developing management tools like WSLBui
 ## Summary
 
 - [**ToolsManager.py**](#toolsmanagerpy)
-  - [Summary](#summary)
-  - [I. Preview](#i-preview)
-  - [II. Prerequisites](#ii-prerequisites)
-    - [II.1 Dependencies](#ii1-dependencies)
-  - [III. Uses](#iii-uses)
-    - [III.1 Command Prompt](#iii1-command-prompt)
-    - [III.2 Main Program](#iii2-main-program)
-  - [IV. Tool Management](#iv-tool-management)
-    - [IV.1 Tool Structure](#iv1-tool-structure)
-    - [IV.2 Tools Registry](#iv2-tools-registry)
-    - [IV.3 Tools Index](#iv3-tools-index)
-  - [V. Options \& Configurations](#v-options--configurations)
-  - [VI. Contributing](#vi-contributing)
-  - [VII. License](#vii-license)
+	- [Summary](#summary)
+	- [I. Preview](#i-preview)
+	- [II. Prerequisites](#ii-prerequisites)
+		- [II.1 Dependencies](#ii1-dependencies)
+	- [III. Uses](#iii-uses)
+		- [III.1 Command Prompt](#iii1-command-prompt)
+		- [III.2 Main Program](#iii2-main-program)
+	- [IV. Tool Management](#iv-tool-management)
+		- [IV.1 Tool Structure](#iv1-tool-structure)
+		- [IV.2 Tools Registry](#iv2-tools-registry)
+		- [IV.3 Tools Index](#iv3-tools-index)
+	- [V. Options \& Configurations](#v-options--configurations)
+	- [VI. Contributing](#vi-contributing)
+	- [VII. License](#vii-license)
 
 ## I. Preview
 
@@ -67,7 +67,7 @@ To use the tool manager, you need to open a terminal prompt and run the python s
 
 Usage: `$ python main.py <argument>`
 
-| Arguments          | Values ​ ​          | Descriptions                                |
+| Arguments          | Values              | Descriptions                                |
 | ------------------ | ------------------- | ------------------------------------------- |
 | `-g`, `--generate` | -                   | Generate a tool with interactive inputs     |
 | `-l`, `--list`     | -                   | Display the list of Python tools            |
@@ -205,6 +205,7 @@ TOOLS: tuple[Tool] = (
 | -------------------------------- | ------- | ------------------------------------------ |
 | [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
 | [Translator](docs/Translator.md) | v1.1    | Translation tool manager                   |
+| [Wifi](docs/Wifi.md)             | v0.1a   | Wifi tool to retrieve saved wifi passwords |
 | [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
 
 [Summary](#summary)
