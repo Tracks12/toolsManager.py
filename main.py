@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from core.codes import CODE_ERR, CODE_EXIT, CODE_OK
+
 try:
 	# --- Importing external dependencies ---
-	from os import system as shell
+	from os import environ, system as shell
 	from os.path import basename
 	from platform import system
 	from re import split
@@ -26,23 +28,25 @@ try:
 	# --- Importing the tool registry ---
 	from tools import TOOLS
 
-except(RuntimeError) as e:
+except(RuntimeError):
 	print("/!\\ - Program must be run with Python 3")
-	exit()
+	exit(CODE_ERR)
 
 except(ModuleNotFoundError) as e:
 	print("[ ERROR ]: " + e.msg)
 	print(f' (?) - Try to run "pip install -r requirements.txt" or "pip install {e.name}" to install missing dependencies')
-	exit()
+	exit(CODE_ERR)
 
-def arg(cfg: Config) -> bool:
+def arg(cfg: Config) -> int:
 	""" Launch method in argument mode
 
 		Args:
 			cfg (Config): the user config instance
 
 		Returns:
-			bool: True value when exiting, False on exception
+			int: the code of the execution
+			- CODE_OK: when the execution is successful
+			- CODE_ERR: when an error occurs
 
 	"""
 
@@ -101,10 +105,13 @@ def arg(cfg: Config) -> bool:
 			print("\n".join([ f" {t}" for t in __table ]))
 
 		elif(argv[1] in __args["prefix"][-2][0]): # -D, --debug
+			environ["TM_DEBUG"] = "1"
+			__cmd = str(f"{CMD_PYTHON} -B {__file__}")
+
 			while(True):
 				shell(CMD_CLEAR)
-				print(f"{Icons.info}Lanched in debug mod")
-				shell("sh debug.sh")
+				print(f"{Icons.info}Debug mode enabled, running command: {__cmd}")
+				shell(__cmd)
 				input(f"{Icons.info}Press any keys to continue...")
 
 		elif(argv[1] in __args["prefix"][-1][0]): # -v, --version
@@ -112,9 +119,9 @@ def arg(cfg: Config) -> bool:
 
 	except(IndexError, KeyError):
 		print(f"{Icons.warn}Insufficient arguments !")
-		return(False)
+		return(CODE_ERR)
 
-	return(True)
+	return(CODE_OK)
 
 def config(cfg: Config) -> bool:
 	""" Config function to apply user settings
@@ -169,14 +176,15 @@ def config(cfg: Config) -> bool:
 
 	return(True)
 
-def main(cfg: Config) -> bool:
+def main(cfg: Config) -> int:
 	""" Main launch method
 
 		Args:
 			cfg (Config): the user config instance
 
 		Returns:
-			bool: True value when exiting
+			int: the code of the execution
+			- CODE_OK: when the execution is successful
 
 	"""
 
@@ -224,8 +232,13 @@ def main(cfg: Config) -> bool:
 			else:
 				print(f"{Icons.warn}Uknown command !")
 
-	return(True)
+	return(CODE_OK)
 
 if(__name__ == "__main__"):
-	__cfg = Config()
-	arg(__cfg) if(len(argv) > 1) else main(__cfg)
+	try:
+		__cfg = Config()
+		exit(arg(__cfg) if(len(argv) > 1) else main(__cfg))
+
+	except(KeyboardInterrupt):
+		print(f"{Icons.info}Exiting...")
+		exit(CODE_EXIT)

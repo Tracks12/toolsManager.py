@@ -48,14 +48,14 @@ class Matrix(Tool):
 
 		return(matrix)
 
-	def __createMatrix(self, x: int, y: int) -> list[list[int]]:
+	def __createMatrix(self, x: int, y: int, value: int = 0) -> list[list[int]]:
 		_matrix	= list[list[int]]([])
 
 		for i in range(0, int(y)):
 			_matrix.append([])
 
 			for j in range(0, int(x)):
-				_matrix[i].append(0)
+				_matrix[i].append(value)
 
 		return(_matrix)
 
@@ -83,14 +83,11 @@ class Matrix(Tool):
 		print(f"\n".join(_output))
 
 	def __label(self, text: str, dim: tuple[int] = (1, 1), color: Colors = "") -> None:
-		_higher = "\x1b[A"
-		_lower = "\x1b[B"
-
 		_ = str(' '*int((dim[1]+(dim[1]-1))/2))[int((len(text)-1)/2)-(1 if(len(text)%2) else 0):-1]
 
-		print(_higher*int(dim[0]/2), end="\r")
+		print("\x1b[A"*int(dim[0]/2), end="\r")
 		print(f" [ {_}{color}{text}{Colors.end}{_}{'' if(len(text)%2) else ' '} ] ")
-		print(_lower*int((dim[0]/2)-1), end="\r")
+		print("\x1b[B"*int((dim[0]/2)-1), end="\r")
 
 	def __onKeyPress(self, keys: list[bool]) -> None:
 		keys[0] = True
@@ -124,10 +121,10 @@ class Matrix(Tool):
 
 	def _random(self, args: list[str]) -> None:
 		try:
-			_keyPressed = [ False ]
-			_matrix = self._new(args)
-			_dim = (len(_matrix), len(_matrix[0]))
-			input("Press key to start ...")
+			_keyPressed	= [ False ]
+			_matrix		= self._new(args)
+			_dim		= (len(_matrix), len(_matrix[0]))
+			input("Press enter to start ...")
 			shell(CMD_CLEAR)
 
 			_execs = (
@@ -135,10 +132,9 @@ class Matrix(Tool):
 				lambda x:self.__removeRandomPoint(x)
 			)
 
-			_higher = "\x1b[A"
-			_hook = on_press(lambda e:self.__onKeyPress(_keyPressed))
-
+			_hook	= on_press(lambda e:self.__onKeyPress(_keyPressed))
 			_iterations = int(args[2] if(len(args) == 3) else 3)
+
 			for i in range(0, _iterations):
 				_stats = {
 					"Iterations": f"{i+1}/{_iterations}",
@@ -146,7 +142,7 @@ class Matrix(Tool):
 
 				while(sum([ value for x in _matrix for value in x ]) != (len(_matrix)*len(_matrix[0]), 0)[i%2]):
 					_matrix = _execs[i%2](_matrix)
-					print(_higher*(len(_matrix)+1), end="\r")
+					print("\x1b[A"*(len(_matrix)+1), end="\r")
 					self.__displayMatrix(_matrix, _stats)
 
 					if(_keyPressed[0]):

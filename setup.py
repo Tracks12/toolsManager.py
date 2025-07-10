@@ -112,7 +112,7 @@ def arg() -> bool:
 			print("[ INFO ]: Listing the package registry:")
 			for i, lib in enumerate(LIBS_REGISTRY, 1):
 				print(f" {' '*(3-len(str(i)))}{i}. {lib} -> {abspath(f'{LIBS_PATH}/{lib}.rar')}")
-		
+
 		elif(argv[1] in __args["prefix"][3][0]): # -u, --uninstall
 			uninstall([ argv[2] ])
 

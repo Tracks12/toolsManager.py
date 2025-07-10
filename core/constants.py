@@ -35,11 +35,11 @@ CMD_CLEAR = "clear" if(__isLinux) else "cls"
 """ Command to clear the terminal screen, platform-dependent
 """
 
-CMD_PYTHON = str(f"python{'3' if(__isLinux) else ''}")
+CMD_PYTHON = 'python3' if(__isLinux) else 'python'
 """ Command to run Python scripts, platform-dependent
 """
 
-ENABLE_COLOR = bool(system() == "Linux")
+ENABLE_COLOR = __isLinux
 """ Boolean indicating whether color output is enabled, typically set to True on Linux systems
 """
 

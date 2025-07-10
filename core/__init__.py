@@ -63,12 +63,12 @@ def sortTools(tools: list[Tool]) -> list[Tool]:
 def splash(spacing: int = 2) -> None:
 	for i, row in enumerate((
 		" {}_              _    __  __{}".format(Colors.yellow+Colors.bold, Colors.end),
-		"{}| |            | |  |  \\/  |{}".format(Colors.yellow+Colors.bold, Colors.end),
+		"{}| |            | |  |  \\/  |{}\t{}by {}{}".format(Colors.yellow+Colors.bold, Colors.end, Colors.purple, INFO["author"], Colors.end),
 		"{}| |_ ___   ___ | | _|_\\  / | __ _ _ __   __ _  __ _  ___ _ __{}".format(Colors.yellow+Colors.bold, Colors.end),
-		"{}| __/ _ \\ / _ \\| |/ _/|\\/| |/ _` | '_ \\ / _` |/ _` |/ _ \\ '__|{}".format(Colors.yellow+Colors.bold, Colors.end),
+		"{}| __/ _ \\ / _ \\| |/ _/|\\/| |/ _` | '_ \\ / _` |/ _` |/ _ \\ '_/{}".format(Colors.yellow+Colors.bold, Colors.end),
 		"{}| || (_) | (_) | _\\ \\ |  | | (_| | | | | (_| | (_| |  __/ |{}".format(Colors.yellow+Colors.bold, Colors.end),
 		" {}\\__\\___/ \\___/|/___/_|  |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_|{}".format(Colors.yellow+Colors.bold, Colors.end),
-		"   {}version: {}{}                               {}|___/{}".format(Colors.purple, INFO["version"], Colors.end, Colors.yellow+Colors.bold, Colors.end),
+		"                                              {}|___/{}\t{}{}{}".format(Colors.yellow+Colors.bold, Colors.end, Colors.red, INFO["version"], Colors.end),
 	)):
 		print(f"{' '*spacing}{row}", end="\n"*(2 if(i == 6) else 1))
 		sleep(.025)
