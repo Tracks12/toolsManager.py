@@ -205,7 +205,7 @@ TOOLS: tuple[Tool] = (
 | -------------------------------- | ------- | ------------------------------------------ |
 | [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
 | [Translator](docs/Translator.md) | v1.1    | Translation tool manager                   |
-| [Wifi](docs/Wifi.md)             | v0.1a   | Wifi tool to retrieve saved wifi passwords |
+| [Wifi](docs/Wifi.md)             | v1.0    | Wifi tool to retrieve saved wifi passwords |
 | [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
 
 [Summary](#summary)
