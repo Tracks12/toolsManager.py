@@ -87,18 +87,19 @@ def arg(cfg: Config) -> int:
 					launch(tool, argv[2:len(argv)])
 
 		elif(argv[1] in __args["prefix"][-3][0]): # -h, --help
+			_ = max([ len(arg[0][0])+len(arg[0][1])+len(arg[1]) for arg in __args["prefix"] ])+5
 			__table = list[str]([
 				f"{INFO['name']} by {INFO['author']}",
 				f"Github: {INFO['github']}\n",
 				f"Usage: python {basename(__file__)} <argument>\n",
-				f"{'Arguments':<{34}}Descriptions:"
+				f"{'Arguments':<{_}}Descriptions:"
 			])
 
 			for i, arg in enumerate(__args["prefix"]):
 				__left = f"{arg[0][0]}, {arg[0][1]} {arg[1]}"
-				__desc = f"\n{' '*35}* ".join(__args['desc'][i]) if(isinstance(__args['desc'][i], tuple)) else __args['desc'][i]
+				__desc = f"\n{' '*(_+1)}* ".join(__args['desc'][i]) if(isinstance(__args['desc'][i], tuple)) else __args['desc'][i]
 				__table.append("".join([
-					f"{__left:<{34}}{__desc}",
+					f"{__left:<{_}}{__desc}",
 					"\n"*(1 if(i in (len(__args['desc'])-4, len(__args['desc'])-1)) else 0)
 				]))
 

@@ -17,9 +17,9 @@ from core.constants import ENABLE_COLOR
 try:
 	with open(abspath("config.json"), "r", encoding="utf-8") as cfgFile:
 		_ = dict[str, str | bool](load(cfgFile))
-		ENABLE_COLOR = _["colors"]
+		ENABLE_COLOR = _["colors"] or ENABLE_COLOR
 
-except:
+except(Exception):
 	pass
 
 class Colors:
@@ -43,20 +43,15 @@ class Colors:
 
 	"""
 
-	if(ENABLE_COLOR):
-		bold	: str	= "\033[1m"
-		italic	: str	= "\033[3m"
+	bold	= str("\033[1m"		if(ENABLE_COLOR) else "")
+	italic	= str("\033[3m"		if(ENABLE_COLOR) else "")
 
-		red		: str	= "\033[31m"
-		green	: str	= "\033[32m"
-		yellow	: str	= "\033[33m"
-		blue	: str	= "\033[34m"
-		purple	: str	= "\033[35m"
-		cyan	: str	= "\033[36m"
-		white	: str	= "\033[37m"
+	red		= str("\033[31m"	if(ENABLE_COLOR) else "")
+	green	= str("\033[32m"	if(ENABLE_COLOR) else "")
+	yellow	= str("\033[33m"	if(ENABLE_COLOR) else "")
+	blue	= str("\033[34m"	if(ENABLE_COLOR) else "")
+	purple	= str("\033[35m"	if(ENABLE_COLOR) else "")
+	cyan	= str("\033[36m"	if(ENABLE_COLOR) else "")
+	white	= str("\033[37m"	if(ENABLE_COLOR) else "")
 
-		end		: str	= "\033[0m"
-
-	else:
-		bold = italic = end = str("")
-		red = green = yellow = blue = purple = cyan = white = str("")
+	end		= str("\033[0m"		if(ENABLE_COLOR) else "")

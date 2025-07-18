@@ -144,18 +144,18 @@ class Tool:
 
 		"""
 
+		_ = max([ len(a[0][0])+len(a[0][1])+len(a[0][2]) for a in self._args ])+5
 		jumps = list[int]([ len(self._args)-3 ] + jumps[:])
-
 		table = list[str]([
 			"",
 			f"Usage: {self.command[0][0]} <argument>\n",
-			f"{'Arguments':<{34}}Descriptions:"
+			f"{'Arguments':<{_}}Descriptions:"
 		])
 
 		for i, a in enumerate(self._args):
 			l = f"{a[0][0]}, {a[0][1]} {a[0][2]}"
 			table.append("".join([
-				"".join((f"{l:<{34}}", f"\n{' '*35}* ".join(a[1]) if(isinstance(a[1], tuple)) else a[1])),
+				"".join((f"{l:<{_}}", f"\n{' '*(_+1)}* ".join(a[1]) if(isinstance(a[1], tuple)) else a[1])),
 				'\n'*(1 if(i in jumps) else 0)
 			]))
 
