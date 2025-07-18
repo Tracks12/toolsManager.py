@@ -9,6 +9,7 @@ __pycache__
 
 # Packages
 /libs/unpacked/
+/AnguArch/
 /Shell/
 /Translator/
 /WSLBuilder/

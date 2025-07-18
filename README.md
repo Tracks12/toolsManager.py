@@ -127,7 +127,7 @@ To recognize a tool, it is imperative to follow the Tool class nomenclature, whi
 
 ### IV.1 Tool Structure
 
-Here you will find a typical example of a tool structure:
+Here you will find a typical example of a tool structure with a default tool named "Hello":
 
 ```python
 #!/usr/bin/env python3
@@ -181,32 +181,35 @@ class Hello(Tool):
 
 To use the tool you just created, you must declare it in the tool registry by importing it into the [`tools/__init__.py`](tools/__init__.py) file and declaring it in the `TOOLS` constant
 
+Here is an example with a generated tool named "Hello":
+
 ```python
 from core.tool import Tool
 
-from tools.matrix import Matrix # Tool importation
+from tools.hello import Hello # Tool importation
 ...
 
 TOOLS: tuple[Tool] = (
-	Matrix, # Tool declaration
+	Hello, # Tool declaration
 	...
 )
 """ Tools registry """
 ```
 
 > [!note]
-> Eventually, this method of tool declaration will be automated in the tool generation script
+> Since the last update, you no longer need to update the tools registry, it is done automatically.
 
 [Summary](#summary)
 
 ### IV.3 Tools Index
 
-| Tool                             | Version | Description                                |
-| -------------------------------- | ------- | ------------------------------------------ |
-| [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules     |
-| [Translator](docs/Translator.md) | v1.1    | Translation tool manager                   |
-| [Wifi](docs/Wifi.md)             | v1.0    | Wifi tool to retrieve saved wifi passwords |
-| [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL |
+| Tool                             | Version | Description                                           |
+| -------------------------------- | ------- | ----------------------------------------------------- |
+| [AnguArch](docs/AnguArch.md)     | v1.0    | Create a Angular project with specific design pattern |
+| [Shell](docs/Shell.md)           | v1.0    | Prompt interface with custom schedules                |
+| [Translator](docs/Translator.md) | v1.1    | Translation tool manager                              |
+| [Wifi](docs/Wifi.md)             | v1.0    | Wifi tool to retrieve saved wifi passwords            |
+| [WSLBuilder](docs/WSLBuilder.md) | v1.1    | Managing Docker images compatible with WSL            |
 
 [Summary](#summary)
 

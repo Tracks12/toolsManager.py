@@ -128,7 +128,7 @@ class Shell(Tool):
 			print(f"{Icons.info}Using {self.__path} for {self.name} workspace")
 
 		except(PermissionError):
-			print(f"{Icons.warn}Permission denied: Unable to create '{self.__path}'.")
+			print(f'{Icons.warn}Permission denied: Unable to create "{self.__path}".')
 
 		except(Exception) as e:
 			print(f"{Icons.err}An error occurred: {e}")
